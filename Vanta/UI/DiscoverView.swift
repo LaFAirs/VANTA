@@ -73,21 +73,11 @@ struct RepositoriesView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    if let error { VantaErrorCard(error) }
-                    ForEach(repos, id: \.id) { r in
-                        VantaCard {
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(r.name).font(.headline)
-                                    Spacer()
-                                    Button(role: .destructive) { Task { await RepositoryStore.shared.remove(id: r.id); await load() } } {
-                                        Image(systemName: "trash").foregroundStyle(VantaDS.danger)
-                                    }
-                                }
-                                Text(r.url.absoluteString).font(.caption).foregroundStyle(VantaDS.secondaryText)
-                                Text("\(r.apps.count) apps").font(.caption2).foregroundStyle(VantaDS.secondaryText)
-                            }
-                        }
+                    if let currentError = error { VantaErrorCard(currentError) }
+                    ForEach(repos, id: \.id) { repo in
+                        RepositoryRow(repo: repo, onDelete: {
+                            Task { await deleteRepo(repo) }
+                        })
                     }
                     addCard
                 }.padding()
@@ -111,6 +101,11 @@ struct RepositoriesView: View {
 
     private func load() async { repos = await RepositoryStore.shared.all() }
 
+    private func deleteRepo(_ repo: AppRepository) async {
+        await RepositoryStore.shared.remove(id: repo.id)
+        await load()
+    }
+
     private func add() async {
         do {
             busy = true; error = nil
@@ -123,5 +118,27 @@ struct RepositoriesView: View {
         } catch let e as VantaError { self.error = e }
         catch { self.error = .repositoryInvalid(reason: error.localizedDescription) }
         busy = false
+    }
+}
+
+private struct RepositoryRow: View {
+    let repo: AppRepository
+    var onDelete: () -> Void
+
+    var body: some View {
+        VantaCard {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(repo.name).font(.headline)
+                    Spacer()
+                    Button(role: .destructive, action: onDelete, label: {
+                        Image(systemName: "trash").foregroundStyle(VantaDS.danger)
+                    })
+                    .accessibilityLabel("Remove \(repo.name)")
+                }
+                Text(repo.url.absoluteString).font(.caption).foregroundStyle(VantaDS.secondaryText)
+                Text("\(repo.apps.count) apps").font(.caption2).foregroundStyle(VantaDS.secondaryText)
+            }
+        }
     }
 }
