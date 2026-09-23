@@ -41,13 +41,13 @@ struct FilesView: View {
             }
             .background(VantaDS.background.ignoresSafeArea())
             .navigationTitle("Files")
-            .task(id: currentArea) { await self.load() }
+            .task(id: currentArea) { await self.load(area: currentArea) }
         }
     }
 
-    private func load() async {
+    private func load(area: VantaFileStore.Area) async {
         do {
-            self.items = try await VantaFileStore.shared.list(self.area)
+            self.items = try await VantaFileStore.shared.list(area)
         } catch {
             self.error = .ipaNotFound
         }
@@ -55,7 +55,7 @@ struct FilesView: View {
 
     private func delete(_ item: VantaFileStore.Item) async {
         try? await VantaFileStore.shared.delete(item.url)
-        await self.load()
+        await self.load(area: self.area)
     }
 
     private func icon(for url: URL) -> String {
