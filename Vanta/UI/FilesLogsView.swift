@@ -7,7 +7,8 @@ struct FilesView: View {
     @State private var error: VantaError?
 
     var body: some View {
-        NavigationStack {
+        let currentArea = self.area
+        return NavigationStack {
             VStack {
                 Picker("Area", selection: self.$area) {
                     ForEach(VantaFileStore.Area.allCases, id: \.self) {
@@ -40,7 +41,7 @@ struct FilesView: View {
             }
             .background(VantaDS.background.ignoresSafeArea())
             .navigationTitle("Files")
-            .task(id: self.area) { await self.load() }
+            .task(id: currentArea) { await self.load() }
         }
     }
 
