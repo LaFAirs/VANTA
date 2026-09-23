@@ -11,7 +11,7 @@ struct AppsView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    if let error { VantaErrorCard(error) }
+                    if let error { VantaErrorCard(error, retry: nil) }
                     if self.apps.isEmpty {
                         VantaCard {
                             VStack(spacing: 8) {
@@ -81,7 +81,7 @@ struct ImportSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 14) {
-                if let error { VantaErrorCard(error) }
+                if let error { VantaErrorCard(error, retry: nil) }
                 VantaPrimaryButton(self.picking ? "Picking…" : "Choose IPA from Files") {
                     self.picking = true
                 }

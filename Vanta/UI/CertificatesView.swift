@@ -12,7 +12,7 @@ struct CertificatesView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    if let error { VantaErrorCard(error) }
+                    if let error { VantaErrorCard(error, retry: nil) }
                     HStack(spacing: 10) {
                         Button("Import .p12") { self.importingP12 = true }
                             .buttonStyle(.borderedProminent).tint(VantaDS.accent)

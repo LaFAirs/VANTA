@@ -83,7 +83,7 @@ struct RepositoriesView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    if let currentError = error { VantaErrorCard(currentError) }
+                    if let currentError = error { VantaErrorCard(currentError, retry: nil) }
                     ForEach(self.repos, id: \.id) { repo in
                         RepositoryRow(repo: repo, onDelete: {
                             Task { await self.deleteRepo(repo) }
