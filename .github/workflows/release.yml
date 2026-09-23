@@ -241,6 +241,17 @@ jobs:
             --bundle-id "${{ env.APP_BUNDLE_ID }}"
           cat RELEASE_NOTES.md
 
+      - name: Generate SBOM (CycloneDX, zero vendored deps by design)
+        run: |
+          set -euo pipefail
+          python3 Scripts/generate-sbom.py \
+            --version "${{ steps.version.outputs.version }}" \
+            --build "${{ steps.version.outputs.build }}" \
+            --bundle-id "${{ env.APP_BUNDLE_ID }}" \
+            --sha-file SHA256SUMS.txt \
+            --output SBOM.json
+          cat SBOM.json
+
       - name: Upload artifacts (VANTA-iOS)
         uses: actions/upload-artifact@v4
         with:
@@ -248,6 +259,7 @@ jobs:
           path: |
             VANTA.ipa
             SHA256SUMS.txt
+            SBOM.json
             RELEASE_NOTES.md
             build-archive.log
             build-test.log
@@ -261,14 +273,15 @@ jobs:
           TAG="${{ steps.version.outputs.tag }}"
           test -f VANTA.ipa || { echo "::error::VANTA.ipa missing — refusing to publish."; exit 1; }
           test -f SHA256SUMS.txt || { echo "::error::SHA256SUMS.txt missing — refusing to publish."; exit 1; }
+          test -f SBOM.json || { echo "::error::SBOM.json missing — refusing to publish."; exit 1; }
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG exists — uploading assets."
-            gh release upload "$TAG" VANTA.ipa SHA256SUMS.txt --clobber
+            gh release upload "$TAG" VANTA.ipa SHA256SUMS.txt SBOM.json --clobber
           else
             gh release create "$TAG" \
               --title "VANTA ${{ steps.version.outputs.version }}" \
               --notes-file RELEASE_NOTES.md \
-              VANTA.ipa SHA256SUMS.txt
+              VANTA.ipa SHA256SUMS.txt SBOM.json
           fi
 
       - name: Cleanup signing material (always)

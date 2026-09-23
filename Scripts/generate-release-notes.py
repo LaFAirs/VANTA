@@ -75,13 +75,25 @@ notes += f"""
 - Type: **{signing_type}**
 - Bundle ID: `{a.bundle_id}`
 - Version: `{a.version}` (build `{a.build}`)
+- Min iOS: `17.0`
 - SHA-256: `{sha}`
+- SBOM: `SBOM.json` (CycloneDX, attached to this release)
 
 Verify after download:
 
 ```bash
 shasum -a 256 -c SHA256SUMS.txt
 ```
+
+## Install
+
+1. **Sideload** the IPA with [Sideloadly](https://sideloadly.io),
+   [AltStore](https://altstore.io), [SideStore](https://sidestore.io),
+   or your preferred signer.
+2. **Unsigned builds:** re-sign with your own Apple certificate /
+   provisioning profile first — unsigned IPAs cannot be installed as-is.
+3. **Trust** the developer profile under
+   *Settings → General → VPN & Device Management*.
 
 ## Requirements
 
@@ -96,7 +108,6 @@ shasum -a 256 -c SHA256SUMS.txt
 
 - On-device installation requires a valid signing identity; VANTA reports
   the exact reason instead of inventing success.
-- Screenshots in the README are placeholders until device captures exist.
 """
 pathlib.Path("RELEASE_NOTES.md").write_text(notes, encoding="utf-8")
 print("wrote RELEASE_NOTES.md")

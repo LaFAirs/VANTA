@@ -1,0 +1,56 @@
+{
+  "images": [
+    {
+      "size": "1024x1024",
+      "idiom": "universal",
+      "filename": "icon-1024.png",
+      "scale": "1x"
+    },
+    {
+      "size": "180x180",
+      "idiom": "universal",
+      "filename": "icon-180.png",
+      "scale": "1x"
+    },
+    {
+      "size": "120x120",
+      "idiom": "universal",
+      "filename": "icon-120.png",
+      "scale": "1x"
+    },
+    {
+      "size": "87x87",
+      "idiom": "universal",
+      "filename": "icon-87.png",
+      "scale": "1x"
+    },
+    {
+      "size": "80x80",
+      "idiom": "universal",
+      "filename": "icon-80.png",
+      "scale": "1x"
+    },
+    {
+      "size": "60x60",
+      "idiom": "universal",
+      "filename": "icon-60.png",
+      "scale": "1x"
+    },
+    {
+      "size": "58x58",
+      "idiom": "universal",
+      "filename": "icon-58.png",
+      "scale": "1x"
+    },
+    {
+      "size": "40x40",
+      "idiom": "universal",
+      "filename": "icon-40.png",
+      "scale": "1x"
+    }
+  ],
+  "info": {
+    "version": 1,
+    "author": "vanta"
+  }
+}

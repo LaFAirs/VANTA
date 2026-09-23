@@ -12,6 +12,16 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 FORBIDDEN_SUFFIXES = (".p12", ".pfx", ".mobileprovision", ".provisionprofile", ".cer", ".key", ".p8", ".pem")
 REQUIRED_DOCS = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "CHANGELOG.md"]
 REQUIRED_DIRS = ["Vanta", "VantaTests", "Documentation", "Scripts", "Resources", ".github/workflows"]
+REQUIRED_GITHUB = [
+    ".github/CODEOWNERS",
+    ".github/FUNDING.yml",
+    ".github/dependabot.yml",
+    ".github/workflows/build.yml",
+    ".github/workflows/test.yml",
+    ".github/workflows/release.yml",
+    ".github/workflows/codeql.yml",
+    ".github/workflows/dependency-review.yml",
+]
 
 errors: list[str] = []
 for suffix in FORBIDDEN_SUFFIXES:
@@ -25,6 +35,9 @@ for name in REQUIRED_DOCS:
 for d in REQUIRED_DIRS:
     if not (ROOT / d).is_dir():
         errors.append(f"missing required dir: {d}")
+for g in REQUIRED_GITHUB:
+    if not (ROOT / g).is_file():
+        errors.append(f"missing required github file: {g}")
 if (ROOT / "Vanta" / "App" / "Secrets.swift").exists():
     errors.append("Vanta/App/Secrets.swift must never exist in repo")
 
