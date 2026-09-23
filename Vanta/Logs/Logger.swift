@@ -1,5 +1,4 @@
 import Foundation
-import OSLog
 import SwiftUI
 
 public enum LogLevel: String, Codable, CaseIterable, Sendable {
@@ -23,18 +22,17 @@ public actor Logger {
     public static let shared = Logger()
     private var entries: [LogEntry] = []
     private var listeners: [@Sendable ([LogEntry]) -> Void] = []
-    private let oslog = OSLog.Logger(subsystem: "com.vanta.app", category: "vanta")
 
     /// Records an entry and mirrors it to OSLog.
     public func log(_ level: LogLevel, _ message: String) {
         entries.append(LogEntry(level: level, message: message))
         if entries.count > 2000 { entries.removeFirst(entries.count - 2000) }
         switch level {
-        case .debug: self.oslog.debug("\(message, privacy: .public)")
-        case .info: self.oslog.info("\(message, privacy: .public)")
-        case .success: self.oslog.notice("\(message, privacy: .public)")
-        case .warning: self.oslog.error("\(message, privacy: .public)")
-        case .error: self.oslog.fault("\(message, privacy: .public)")
+        case .debug: VantaOSLog.vanta.debug("\(message, privacy: .public)")
+        case .info: VantaOSLog.vanta.info("\(message, privacy: .public)")
+        case .success: VantaOSLog.vanta.notice("\(message, privacy: .public)")
+        case .warning: VantaOSLog.vanta.error("\(message, privacy: .public)")
+        case .error: VantaOSLog.vanta.fault("\(message, privacy: .public)")
         }
         let snapshot = entries
         for listener in listeners { listener(snapshot) }

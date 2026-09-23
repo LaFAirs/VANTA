@@ -378,6 +378,21 @@ public struct RepoApp: Identifiable, Codable, Sendable, Hashable {
         self.changelog = changelog
     }
 
+    /// Decodes an entry, assigning a fresh local identity.
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = UUID()
+        self.name = try container.decode(String.self, forKey: .name)
+        self.bundleIdentifier = try container.decode(String.self, forKey: .bundleIdentifier)
+        self.version = try container.decode(String.self, forKey: .version)
+        self.versionDate = try container.decodeIfPresent(Date.self, forKey: .versionDate)
+        self.downloadURL = try container.decode(URL.self, forKey: .downloadURL)
+        self.iconURL = try container.decodeIfPresent(URL.self, forKey: .iconURL)
+        self.developer = try container.decode(String.self, forKey: .developer)
+        self.localizedDescription = try container.decode(String.self, forKey: .localizedDescription)
+        self.changelog = try container.decodeIfPresent(String.self, forKey: .changelog)
+    }
+
     /// Business-key equality: same app, regardless of local identity.
     public static func == (lhs: RepoApp, rhs: RepoApp) -> Bool {
         lhs.bundleIdentifier == rhs.bundleIdentifier && lhs.version == rhs.version
