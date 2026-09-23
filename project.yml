@@ -19,6 +19,8 @@ targets:
       properties:
         CFBundleName: VANTA
         CFBundleDisplayName: VANTA
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "100"
         UILaunchStoryboardName: null
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
