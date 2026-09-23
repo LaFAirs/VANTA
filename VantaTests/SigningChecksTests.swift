@@ -36,7 +36,7 @@ final class SigningChecksTests: XCTestCase {
             certificate: cert(), profile: profile(),
             bundleID: "com.example.app",
             requestedEntitlements: ["get-task-allow", "aps-environment"])) { e in
-            guard case VantaError.entitlementsMismatch(let m) = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.entitlementsMismatch(let m) = ve else {
                 return XCTFail("expected entitlementsMismatch")
             }
             XCTAssertEqual(m, ["aps-environment"])
@@ -47,7 +47,7 @@ final class SigningChecksTests: XCTestCase {
         XCTAssertThrowsError(try SigningChecks.verify(
             certificate: cert(team: "TEAM-A"), profile: profile(team: "TEAM-B"),
             bundleID: "com.example.app", requestedEntitlements: [])) { e in
-            guard case VantaError.signingFailed = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.signingFailed = ve else {
                 return XCTFail("expected signingFailed")
             }
         }

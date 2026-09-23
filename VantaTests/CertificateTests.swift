@@ -14,7 +14,7 @@ final class CertificateTests: XCTestCase {
                                             teamID: "ABC123",
                                             expiresAt: Date().addingTimeInterval(-100))
         XCTAssertThrowsError(try CertificateParser.validate(claim)) { e in
-            guard case VantaError.certificateExpired = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.certificateExpired = ve else {
                 return XCTFail("expected expired")
             }
         }

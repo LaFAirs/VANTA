@@ -28,7 +28,7 @@ final class ValidatorsTests: XCTestCase {
     func testInsecureRequiresAcknowledgement() throws {
         let http = try Validators.parseURL("http://example.com/repo.json")
         XCTAssertThrowsError(try Validators.requireSecure(http)) { e in
-            guard case VantaError.insecureURL = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.insecureURL = ve else {
                 return XCTFail("expected insecureURL, got \(e)")
             }
         }

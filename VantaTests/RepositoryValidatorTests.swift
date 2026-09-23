@@ -26,7 +26,7 @@ final class RepositoryValidatorTests: XCTestCase {
         XCTAssertThrowsError(try RepositoryValidator.validate(
             data: manifestData(),
             sourceURL: URL(string: "http://example.com/repo.json")!)) { e in
-            guard case VantaError.insecureURL = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.insecureURL = ve else {
                 return XCTFail("expected insecureURL")
             }
         }
@@ -40,7 +40,7 @@ final class RepositoryValidatorTests: XCTestCase {
         """.data(using: .utf8)!
         XCTAssertThrowsError(try RepositoryValidator.validate(
             data: bad, sourceURL: URL(string: "https://example.com/r.json")!)) { e in
-            guard case VantaError.repositoryInvalid = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.repositoryInvalid = ve else {
                 return XCTFail("expected repositoryInvalid")
             }
         }

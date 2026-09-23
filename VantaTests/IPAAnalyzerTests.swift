@@ -27,7 +27,7 @@ final class IPAAnalyzerTests: XCTestCase {
     func testSupportedArchitectures() throws {
         XCTAssertEqual(try IPAAnalyzer.supportedArchitectures(["arm64"]), ["arm64"])
         XCTAssertThrowsError(try IPAAnalyzer.supportedArchitectures(["x86_64"])) { e in
-            guard case VantaError.unsupportedArchitecture = e as? VantaError else {
+            guard let ve = e as? VantaError, case VantaError.unsupportedArchitecture = ve else {
                 return XCTFail("wrong error \(e)")
             }
         }
