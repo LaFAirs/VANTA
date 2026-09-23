@@ -7,6 +7,13 @@ and [Semantic Versioning](https://semver.org/).
 ## [Unreleased]
 
 ### Added
+- Real IPA release pipeline (`release.yml`: tag trigger → XcodeGen → tests →
+  archive → export/package → validation → SHA256 → GitHub Release assets),
+  with automatic signed/unsigned modes and `Documentation/RELEASING.md`
+- `Scripts/validate-ipa.sh` (gating IPA validation) and
+  `Scripts/generate-release-notes.py` (honest notes with real SHA + signing status)
+
+### Added
 - Initial VANTA repository structure
 - SwiftUI design system (VantaDS: dark `#05070A`, cards `#101722`, electric blue accent)
 - Tab (iPhone) / Sidebar (iPad) navigation

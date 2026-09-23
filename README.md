@@ -50,9 +50,31 @@ Placeholders until the first TestFlight / release build:
 
 ## Installation
 
-Prebuilt IPAs ship via [GitHub Releases](https://github.com/dbudakli1402-collab/VANTA/releases)
-(see `release.yml`). Sideload with your preferred signer, then trust the profile
-under *Settings → General → VPN & Device Management*.
+**Latest release:** [GitHub Releases](https://github.com/dbudakli1402-collab/VANTA/releases)
+([latest build](https://github.com/dbudakli1402-collab/VANTA/releases/latest)).
+
+Every release attaches:
+
+- **VANTA.ipa** — the real CI-built app package
+- **SHA256SUMS.txt** — checksum computed from that exact IPA
+- **Signing status** — stated in the release notes (no guessing)
+
+Verify after download:
+
+```bash
+shasum -a 256 -c SHA256SUMS.txt
+```
+
+Then:
+
+1. **Signed releases:** sideload with your preferred tool, then trust the
+   profile under *Settings → General → VPN & Device Management*.
+2. **Unsigned releases:** re-sign the IPA with your own Apple certificate /
+   provisioning profile first — unsigned IPAs cannot be installed as-is
+   (see [`Documentation/RELEASING.md`](Documentation/RELEASING.md)).
+
+Until the first release pipeline has run, no IPA exists yet — anything else
+would be a fake download link, so there is none.
 
 ## Supported Devices
 

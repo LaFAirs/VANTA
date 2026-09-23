@@ -9,7 +9,7 @@ Fails if:
 import pathlib, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-FORBIDDEN_SUFFIXES = (".p12", ".pfx", ".mobileprovision", ".provisionprofile", ".cer", ".key")
+FORBIDDEN_SUFFIXES = (".p12", ".pfx", ".mobileprovision", ".provisionprofile", ".cer", ".key", ".p8", ".pem")
 REQUIRED_DOCS = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "CODE_OF_CONDUCT.md", "CHANGELOG.md"]
 REQUIRED_DIRS = ["Vanta", "VantaTests", "Documentation", "Scripts", "Resources", ".github/workflows"]
 

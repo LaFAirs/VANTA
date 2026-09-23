@@ -126,8 +126,11 @@ struct AboutView: View {
                 linkRow("Documentation", DeveloperConfig.documentationURL)
                 linkRow("Releases", DeveloperConfig.releasesURL)
                 linkRow("Issues", DeveloperConfig.issuesURL)
-                Link("License: MIT", destination: DeveloperConfig.githubRepositoryURL?.appendingPathComponent("blob/main/LICENSE") ?? URL(string: "https://opensource.org/licenses/MIT")!)
-                    .font(.subheadline).foregroundStyle(VantaDS.accent)
+                if let licenseURL = DeveloperConfig.githubRepositoryURL?.appendingPathComponent("blob/main/LICENSE")
+                    ?? URL(string: "https://opensource.org/licenses/MIT") {
+                    Link("License: MIT", destination: licenseURL)
+                        .font(.subheadline).foregroundStyle(VantaDS.accent)
+                }
             }
         }
     }

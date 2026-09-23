@@ -36,7 +36,10 @@ public actor BackupService {
     /// Encrypt with a user-supplied passphrase (SHA256 → symmetric key, AES-GCM).
     public func encrypt(_ data: Data, passphrase: String) throws -> Data {
         let key = SymmetricKey(data: SHA256.hash(data: Data(passphrase.utf8)))
-        return try AES.GCM.seal(data, using: key).combined!
+        guard let combined = try AES.GCM.seal(data, using: key).combined else {
+            throw VantaError.backupFailed(reason: "Encryption produced no output.")
+        }
+        return combined
     }
 
     public func decrypt(_ data: Data, passphrase: String) throws -> Data {

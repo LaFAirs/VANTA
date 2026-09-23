@@ -74,3 +74,20 @@ Secrets live in GitHub *Actions Secrets*, never in the repo:
 
 `release.yml` imports them into a throwaway keychain only when present;
 otherwise it ships unsigned notes + checksums and says so in the log.
+
+## From source to IPA (release flow)
+
+```text
+Windows
+  ↓  git tag v1.0.0 + git push origin v1.0.0
+GitHub
+  ↓  Release workflow starts (tag trigger)
+macOS Runner
+  ↓  XcodeGen → tests → archive → export/package
+IPA validation + SHA256SUMS.txt
+  ↓
+GitHub Release with VANTA.ipa + SHA256SUMS.txt
+```
+
+No local Xcode needed — tagging from Windows is enough. Full details,
+signing modes, and honest limitations: [`RELEASING.md`](RELEASING.md).
