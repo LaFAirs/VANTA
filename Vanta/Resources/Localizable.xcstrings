@@ -1,0 +1,550 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "vanta.error.title.invalidURL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültige URL"
+          }
+        }
+      }
+    },
+    "vanta.error.title.insecureURL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insecure connection"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsichere Verbindung"
+          }
+        }
+      }
+    },
+    "vanta.error.title.ipaNotFound": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPA not found"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPA nicht gefunden"
+          }
+        }
+      }
+    },
+    "vanta.error.title.ipaCorrupt": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPA is corrupt"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IPA ist beschädigt"
+          }
+        }
+      }
+    },
+    "vanta.error.title.infoPlistMissing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Info.plist missing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Info.plist fehlt"
+          }
+        }
+      }
+    },
+    "vanta.error.title.unsupportedArchitecture": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported architecture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstützte Architektur"
+          }
+        }
+      }
+    },
+    "vanta.error.title.certificateExpired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certificate expired"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zertifikat abgelaufen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.certificateInvalid": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certificate invalid"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zertifikat ungültig"
+          }
+        }
+      }
+    },
+    "vanta.error.title.profileExpired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provisioning profile expired"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provisioning-Profil abgelaufen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.profileMismatch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signieren fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.entitlementsMismatch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entitlements mismatch"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entitlements stimmen nicht überein"
+          }
+        }
+      }
+    },
+    "vanta.error.title.signerUnavailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signer unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signer nicht verfügbar"
+          }
+        }
+      }
+    },
+    "vanta.error.title.signingFailed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signieren fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.verificationFailed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verification failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verifizierung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.installationUnavailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installation unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installation nicht verfügbar"
+          }
+        }
+      }
+    },
+    "vanta.error.title.refreshUnavailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierung nicht verfügbar"
+          }
+        }
+      }
+    },
+    "vanta.error.title.repositoryInvalid": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository invalid"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repository ungültig"
+          }
+        }
+      }
+    },
+    "vanta.error.title.backupFailed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.keychainFailure": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secure storage failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicherer Speicher fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "vanta.error.title.notAvailable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht verfügbar"
+          }
+        }
+      }
+    },
+    "vanta.error.reason.invalidURL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not a valid URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ ist keine gültige URL."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.insecureURL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ uses plain HTTP. Use HTTPS or confirm explicitly."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nutzt unverschlüsseltes HTTP. Nutze HTTPS oder bestätige ausdrücklich."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.ipaNotFound": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The IPA file could not be located."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die IPA-Datei wurde nicht gefunden."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.infoPlistMissing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Info.plist was found inside Payload/*.app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Info.plist in Payload/*.app gefunden."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.unsupportedArchitecture": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Architecture “%@” is not supported on this device."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Architektur „%@“ wird auf diesem Gerät nicht unterstützt."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.certificateExpired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” expired on %@. Import a current identity."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ ist am %@ abgelaufen. Importiere eine aktuelle Identität."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.profileExpired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” expired on %@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ ist am %@ abgelaufen."
+          }
+        }
+      }
+    },
+    "vanta.error.reason.profileMismatch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected provisioning profile does not match this Bundle Identifier.\nBundle ID: %@\nProvisioning Profile: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das gewählte Provisioning-Profil passt nicht zu dieser Bundle-ID.\nBundle-ID: %@\nProvisioning-Profil: %@"
+          }
+        }
+      }
+    },
+    "vanta.error.reason.entitlementsMismatch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Missing entitlements: %@. Choose a profile that grants them."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlende Entitlements: %@. Wähle ein Profil, das sie enthält."
+          }
+        }
+      }
+    },
+    "vanta.error.remedy.profileMismatch": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose another profile"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anderes Profil wählen"
+          }
+        }
+      }
+    },
+    "vanta.error.remedy.insecureURL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use HTTPS"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTPS nutzen"
+          }
+        }
+      }
+    },
+    "vanta.error.remedy.expired": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace certificate"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zertifikat ersetzen"
+          }
+        }
+      }
+    },
+    "vanta.error.remedy.requirements": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View requirements"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voraussetzungen ansehen"
+          }
+        }
+      }
+    },
+    "vanta.error.remedy.default": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0.0"
+}

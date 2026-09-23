@@ -7,12 +7,13 @@ public enum Keychain {
 
     @discardableResult
     public static func store(reference: String, data: Data) -> Bool {
-        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                kSecAttrService as String: service,
-                                kSecAttrAccount as String: reference,
-                                kSecValueData as String: data]
-        SecItemDelete(q as CFDictionary)
-        return SecItemAdd(q as CFDictionary, nil) == errSecSuccess
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecAttrService as String: service,
+                                    kSecAttrAccount as String: reference,
+                                    kSecValueData as String: data,
+                                    kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly]
+        SecItemDelete(query as CFDictionary)
+        return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
     }
 
     public static func load(reference: String) -> Data? {

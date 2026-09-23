@@ -27,13 +27,23 @@ targets:
         ITSAppUsesNonExpiringEmbeddedProfile: false
     settings:
       base:
-        SWIFT_VERSION: "5.9"
+        SWIFT_VERSION: "6.0"
+        SWIFT_UPCOMING_FEATURES: MemberImportVisibility
         SWIFT_STRICT_CONCURRENCY: complete
         ENABLE_USER_SCRIPT_SANDBOXING: YES
         MARKETING_VERSION: "1.0.0"
         CURRENT_PROJECT_VERSION: "100"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: ""
+        CODE_SIGN_ENTITLEMENTS: Vanta/Resources/Vanta.entitlements
+      configs:
+        Release:
+          # Real signing comes from the environment/CI secrets (see RELEASING.md).
+          # Empty Apple vars = unsigned-capable; CI overrides per signing mode.
+          CODE_SIGN_STYLE: Manual
+          DEVELOPMENT_TEAM: $(APPLE_TEAM_ID)
+          CODE_SIGN_IDENTITY: $(APPLE_CODE_SIGN_IDENTITY)
+          PROVISIONING_PROFILE_SPECIFIER: $(APPLE_PROVISIONING_PROFILE_NAME)
     dependencies: []
     scheme:
       testTargets:

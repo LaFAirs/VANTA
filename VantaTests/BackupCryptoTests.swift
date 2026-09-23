@@ -4,7 +4,7 @@ import XCTest
 final class BackupCryptoTests: XCTestCase {
     func testBackupRoundTrip() async throws {
         let service = BackupService.shared
-        let app = ManagedApp(name: "Example", bundleID: "com.example.app", version: "1.0")
+        let app = try ManagedApp(name: "Example", bundleID: "com.example.app", version: "1.0")
         let backup = await service.makeBackupForTest(apps: [app], repos: [])
         let data = try await service.encode(backup)
         let back = try await service.decode(data)
@@ -28,5 +28,31 @@ final class BackupCryptoTests: XCTestCase {
             return XCTFail("expected backupFailed")
         }
         XCTAssertTrue(reason.contains("never exported"))
+    }
+
+    func testPassphraseRotation() async throws {
+        let service = BackupService.shared
+        let plain = Data("rotate-me".utf8)
+        let sealed = try await service.encrypt(plain, passphrase: "old")
+        let rotated = try await service.rotate(sealed, oldPassphrase: "old", newPassphrase: "new")
+        let opened = try await service.decrypt(rotated, passphrase: "new")
+        XCTAssertEqual(opened, plain)
+    }
+
+    func testRotationRejectsWrongOldPassphrase() async throws {
+        let service = BackupService.shared
+        let sealed = try await service.encrypt(Data("x".utf8), passphrase: "right")
+        do {
+            _ = try await service.rotate(sealed, oldPassphrase: "wrong", newPassphrase: "new")
+            XCTFail("expected decryption failure")
+        } catch {
+            XCTAssertTrue(error.localizedDescription.count > 0)
+        }
+    }
+
+    func testLogExportNeverContainsKeyMaterial() async {
+        await Logger.shared.log(.info, "routine entry")
+        let text = await Logger.shared.export()
+        XCTAssertFalse(text.contains("-----BEGIN"))
     }
 }

@@ -1,8 +1,18 @@
+# Strict: CI runs `swiftlint --strict` as a gate. Zero warnings allowed.
 disabled_rules:
   - trailing_whitespace
 opt_in_rules:
   - empty_count
   - sorted_imports
-line_length: 140
+  - explicit_self
+  - missing_docs
+  - unowned_variable_capture
+line_length: 120
+function_body_length: 60
+type_body_length: 300
+file_length: 500
 excluded:
   - VantaTests
+  - VantaUITests
+  - DerivedData
+  - Pods

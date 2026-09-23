@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import SwiftUI
 
 public enum LogLevel: String, Codable, CaseIterable, Sendable {
@@ -16,16 +17,25 @@ public struct LogEntry: Identifiable, Codable, Sendable {
 }
 
 /// Central logger: actor-backed, main-thread published mirror for SwiftUI.
+/// Every entry is also routed to unified logging (OSLog, subsystem com.vanta.app).
 public actor Logger {
     public static let shared = Logger()
     private var entries: [LogEntry] = []
     private var listeners: [@Sendable ([LogEntry]) -> Void] = []
+    private let oslog = OSLog.Logger(subsystem: "com.vanta.app", category: "vanta")
 
     public func log(_ level: LogLevel, _ message: String) {
         entries.append(LogEntry(level: level, message: message))
         if entries.count > 2000 { entries.removeFirst(entries.count - 2000) }
+        switch level {
+        case .debug: self.oslog.debug("\(message, privacy: .public)")
+        case .info: self.oslog.info("\(message, privacy: .public)")
+        case .success: self.oslog.notice("\(message, privacy: .public)")
+        case .warning: self.oslog.error("\(message, privacy: .public)")
+        case .error: self.oslog.fault("\(message, privacy: .public)")
+        }
         let snapshot = entries
-        for l in listeners { l(snapshot) }
+        for listener in listeners { listener(snapshot) }
     }
 
     public func snapshot() -> [LogEntry] { entries }
@@ -36,11 +46,15 @@ public actor Logger {
     }
 
     public func export() -> String {
-        let f = DateFormatter(); f.dateFormat = "HH:mm:ss"
-        return entries.map { "[\(f.string(from: $0.date))] [\($0.level.rawValue.uppercased())] \($0.message)" }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return entries.map { "[\(formatter.string(from: $0.date))] [\($0.level.rawValue.uppercased())] \($0.message)" }
             .joined(separator: "\n")
     }
 }
+
+/// Pipeline wiring: the central logger is the default pipeline sink.
+extension Logger: PipelineLogging {}
 
 /// Observable mirror so views update without awaiting the actor directly.
 @MainActor
@@ -61,7 +75,9 @@ final class LogCenter: ObservableObject {
     }
     func clear() { Task { await Logger.shared.clear(); entries = [] } }
     var exportText: String {
-        let f = DateFormatter(); f.dateFormat = "HH:mm:ss"
-        return entries.map { "[\(f.string(from: $0.date))] [\($0.level.rawValue.uppercased())] \($0.message)" }.joined(separator: "\n")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss"
+        return entries.map { "[\(formatter.string(from: $0.date))] [\($0.level.rawValue.uppercased())] \($0.message)" }
+            .joined(separator: "\n")
     }
 }

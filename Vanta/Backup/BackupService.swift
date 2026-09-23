@@ -48,6 +48,21 @@ public actor BackupService {
         return try AES.GCM.open(box, using: key)
     }
 
+    /// Rotates the encryption passphrase: decrypts with the old one and
+    /// re-encrypts with the new one. Throws when the old passphrase is wrong.
+    public func rotate(_ data: Data, oldPassphrase: String, newPassphrase: String) throws -> Data {
+        let plain = try self.decrypt(data, passphrase: oldPassphrase)
+        return try self.encrypt(plain, passphrase: newPassphrase)
+    }
+
+    /// Wipes the given Keychain identity references (e.g. on full reset).
+    /// Deletes references only; backup payloads must be deleted separately.
+    public func wipeKeychainReferences(_ references: [String]) {
+        for reference in references {
+            Keychain.delete(reference: reference)
+        }
+    }
+
     public func refusePrivateKeyExport() -> VantaError {
         .backupFailed(reason: "Private keys are never exported. Identities stay in the Keychain; backups carry metadata only.")
     }

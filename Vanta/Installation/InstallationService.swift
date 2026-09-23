@@ -30,3 +30,6 @@ public actor InstallationService {
         // guide the user instead.
     }
 }
+
+/// Pipeline wiring: the service is the default installation verifier.
+extension InstallationService: InstallationVerifying {}

@@ -30,9 +30,7 @@ public actor ManagedAppStore {
 
     public func markRefresh(bundleID: String, expiresAt: Date?) {
         guard let i = apps.firstIndex(where: { $0.bundleID == bundleID }) else { return }
-        apps[i].status = .installed
-        apps[i].expiresAt = expiresAt
-        apps[i].lastRefreshed = Date()
+        apps[i].markRefreshed(expiresAt: expiresAt)
         record("\(apps[i].name) refreshed")
     }
 

@@ -1,0 +1,6 @@
+# Keep formatting deterministic; CI enforces `swiftformat --lint .`.
+--indent 4
+--linebreaks lf
+--semicolons inline
+--trailingcommas never
+--emptybraces no-space

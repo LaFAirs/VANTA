@@ -97,28 +97,51 @@ struct SigningView: View {
 
     private func run() async {
         guard let cert = selectedCert, let profile = selectedProfile else { return }
-        running = true; error = nil; phase = .processing
-        do {
-            _ = try await SigningPipeline.shared.run(
-                package: package, certificate: cert, profile: profile, signer: signer()
-            ) { report in
-                Task { @MainActor in
-                    self.progress = report.progress
-                    self.status = report.message
-                    switch report.step {
-                    case .sign: self.phase = .signing
-                    case .verify: self.phase = .verifying
-                    case .install: self.phase = .installing
-                    default: self.phase = .processing
-                    }
-                    if report.progress >= 1.0 { self.phase = .success }
-                }
+        let availability = self.signer().availability(certificate: cert, profile: profile)
+        guard case .ready = availability else {
+            self.error = .signerUnavailable(availability.reason ?? "Signer is not ready.")
+            return
+        }
+        running = true
+        self.error = nil
+        phase = .processing
+        var outcome: SigningPipeline.Outcome = .ongoing
+        let stream = SigningPipeline.shared.run(package: self.package, certificate: cert,
+                                                profile: profile, signer: self.signer())
+        for await report in stream {
+            self.progress = report.progress
+            self.status = report.message
+            switch report.step {
+            case .sign: self.phase = .signing
+            case .verify: self.phase = .verifying
+            case .install: self.phase = .installing
+            default: self.phase = .processing
             }
-            await ManagedAppStore.shared.upsert(ManagedApp(name: package.name, bundleID: package.bundleID,
-                                                           version: package.version, build: package.build,
-                                                           status: .installed, teamID: cert.teamID))
-        } catch let e as VantaError { self.error = e; phase = .idle }
-        catch { self.error = .signingFailed(reason: error.localizedDescription); phase = .idle }
+            if report.progress >= 1.0 { self.phase = .success }
+            outcome = report.outcome
+        }
+        switch outcome {
+        case .succeeded(let staged):
+            do {
+                try await ManagedAppStore.shared.upsert(ManagedApp(
+                    name: self.package.name, bundleID: self.package.bundleID,
+                    version: self.package.version, build: self.package.build,
+                    status: .installed, teamID: cert.teamID))
+                await Logger.shared.log(.success, "Installed record for \(staged.original.bundleID)")
+            } catch let updateError as VantaError {
+                self.error = updateError
+                phase = .idle
+            } catch {
+                self.error = .signingFailed(reason: error.localizedDescription)
+                phase = .idle
+            }
+        case .failed(let pipelineError):
+            self.error = pipelineError
+            phase = .idle
+        case .ongoing:
+            self.error = .signingFailed(reason: "Signing pipeline ended without a result.")
+            phase = .idle
+        }
         running = false
     }
 }

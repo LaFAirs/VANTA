@@ -24,7 +24,7 @@ public struct CertificateCard: View {
                 StatusPill(cert.status.label, color: cert.status.color)
             }
             HStack(spacing: 16) {
-                metric("Expires", "\(cert.daysRemaining) days")
+                metric("Expires", "\(cert.daysRemaining()) days")
                 metric("Apps", "\(appCount)")
             }.padding(.vertical, 4)
             HStack(spacing: 16) {
