@@ -22,6 +22,13 @@ REQUIRED_GITHUB = [
     ".github/workflows/codeql.yml",
     ".github/workflows/dependency-review.yml",
 ]
+REQUIRED_SCRIPTS = [
+    "Scripts/validate-repo.py",
+    "Scripts/ensure-simulator.sh",
+    "Scripts/validate-ipa.sh",
+    "Scripts/generate-release-notes.py",
+    "Scripts/generate-sbom.py",
+]
 
 errors: list[str] = []
 for suffix in FORBIDDEN_SUFFIXES:
@@ -38,6 +45,9 @@ for d in REQUIRED_DIRS:
 for g in REQUIRED_GITHUB:
     if not (ROOT / g).is_file():
         errors.append(f"missing required github file: {g}")
+for s in REQUIRED_SCRIPTS:
+    if not (ROOT / s).is_file():
+        errors.append(f"missing required script: {s}")
 if (ROOT / "Vanta" / "App" / "Secrets.swift").exists():
     errors.append("Vanta/App/Secrets.swift must never exist in repo")
 

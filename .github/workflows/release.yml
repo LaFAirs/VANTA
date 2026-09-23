@@ -84,11 +84,14 @@ jobs:
       - name: Lint (advisory, never gates the release)
         run: swiftlint --strict || echo "::warning::SwiftLint reported issues (advisory only)."
 
+      - name: Ensure iOS Simulator exists
+        run: bash Scripts/ensure-simulator.sh
+
       - name: Run tests (gating)
         run: |
           set -euo pipefail
           xcodebuild test -scheme Vanta \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination "$SIM_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             -enableCodeCoverage YES 2>&1 | tee build-test.log
 

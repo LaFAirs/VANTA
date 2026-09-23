@@ -47,11 +47,14 @@ jobs:
         run: swiftlint --strict
       - name: Format check (swiftformat)
         run: swiftformat --lint .
+      - name: Ensure iOS Simulator exists
+        run: bash Scripts/ensure-simulator.sh
       - name: Build (simulator, no signing)
         run: |
           # pipefail: xcpretty exits 0 even when xcodebuild fails — never mask that.
           set -o pipefail
+          # shellcheck disable=SC2086
           xcodebuild -scheme Vanta \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination "$SIM_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
-            build | xcpretty || xcodebuild -scheme Vanta -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO build
+            build | xcpretty || xcodebuild -scheme Vanta -destination "$SIM_DESTINATION" CODE_SIGNING_ALLOWED=NO build

@@ -21,16 +21,18 @@ jobs:
         run: brew install xcodegen || brew upgrade xcodegen
       - name: Generate project
         run: xcodegen generate
+      - name: Ensure iOS Simulator exists
+        run: bash Scripts/ensure-simulator.sh
       - name: Run tests (simulator)
         run: |
           # pipefail: xcpretty exits 0 even when xcodebuild fails — never mask that.
           set -o pipefail
           xcodebuild test -scheme Vanta \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination "$SIM_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO \
             -enableCodeCoverage YES | xcpretty || \
           xcodebuild test -scheme Vanta \
-            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            -destination "$SIM_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO -enableCodeCoverage YES
       - name: Validate repo scripts (Windows-compatible checks)
         run: python3 Scripts/validate-repo.py
