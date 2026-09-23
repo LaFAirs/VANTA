@@ -186,8 +186,8 @@ public struct PersonalTeamSigner: SignerProvider {
 
     /// Never ready without configuration; states the real reason.
     public func availability(
-        certificate: SigningCertificate,
-        profile: ProvisioningProfile
+        certificate _: SigningCertificate,
+        profile _: ProvisioningProfile
     ) -> SignerAvailability {
         .unavailable(reason: "Sign in with an Apple ID in Settings → Signing to enable the free personal team flow.")
     }
@@ -214,8 +214,8 @@ public struct RemoteSigner: SignerProvider {
 
     /// Never ready without configuration; states the real reason.
     public func availability(
-        certificate: SigningCertificate,
-        profile: ProvisioningProfile
+        certificate _: SigningCertificate,
+        profile _: ProvisioningProfile
     ) -> SignerAvailability {
         .unavailable(reason: "No remote signer configured. This is an explicit opt-in integration.")
     }

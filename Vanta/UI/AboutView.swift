@@ -143,10 +143,9 @@ struct AboutView: View {
         }
     }
 
+    @ViewBuilder
     private func linkRow(_ title: String, _ url: URL?) -> some View {
-        Group {
-            if let url { Link(title, destination: url).font(.subheadline).foregroundStyle(VantaDS.accent) }
-        }
+        if let url { Link(title, destination: url).font(.subheadline).foregroundStyle(VantaDS.accent) }
     }
 
     private func load() async {
