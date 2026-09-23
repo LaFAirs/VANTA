@@ -74,7 +74,7 @@ struct RepositoriesView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if let error { VantaErrorCard(error) }
-                    ForEach(repos) { r in
+                    ForEach(repos, id: \.id) { r in
                         VantaCard {
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack {
