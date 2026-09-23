@@ -5,10 +5,10 @@ import XCTest
 /// Runs on any platform without Xcode.
 final class SecurityHygieneTests: XCTestCase {
     func testNoTokensInTestSources() throws {
-        // This test file itself must not contain secrets — self-check pattern.
+        // Needles are concatenated so this file itself never contains the patterns.
         let selfURL = URL(fileURLWithPath: #file)
         let text = try String(contentsOf: selfURL, encoding: .utf8)
-        for needle in ["ghp_", "github_pat_", "APPLE_CERTIFICATE_PASSWORD="] {
+        for needle in ["gh" + "p_", "github_" + "pat_", "APPLE_" + "CERTIFICATE_" + "PASSWORD="] {
             XCTAssertFalse(text.contains(needle), "secret-like string in tests: \(needle)")
         }
     }
