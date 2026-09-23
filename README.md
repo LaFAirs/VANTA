@@ -6,11 +6,11 @@
 
 **Advanced iOS & iPadOS Sideloading Manager.**
 
-[![Build](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/build.yml/badge.svg)](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/build.yml)
-[![Tests](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/test.yml/badge.svg)](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/test.yml)
-[![Release](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/release.yml/badge.svg)](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/release.yml)
-[![CodeQL](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/codeql.yml/badge.svg)](https://github.com/dbudakli1402-collab/VANTA/actions/workflows/codeql.yml)
-[![Latest release](https://img.shields.io/github/v/release/dbudakli1402-collab/VANTA?display_name=tag)](https://github.com/dbudakli1402-collab/VANTA/releases/latest)
+[![Build](https://github.com/LaFAirs/VANTA/actions/workflows/build.yml/badge.svg)](https://github.com/LaFAirs/VANTA/actions/workflows/build.yml)
+[![Tests](https://github.com/LaFAirs/VANTA/actions/workflows/test.yml/badge.svg)](https://github.com/LaFAirs/VANTA/actions/workflows/test.yml)
+[![Release](https://github.com/LaFAirs/VANTA/actions/workflows/release.yml/badge.svg)](https://github.com/LaFAirs/VANTA/actions/workflows/release.yml)
+[![CodeQL](https://github.com/LaFAirs/VANTA/actions/workflows/codeql.yml/badge.svg)](https://github.com/LaFAirs/VANTA/actions/workflows/codeql.yml)
+[![Latest release](https://img.shields.io/github/v/release/LaFAirs/VANTA?display_name=tag)](https://github.com/LaFAirs/VANTA/releases/latest)
 [![iOS 17+](https://img.shields.io/badge/iOS-17%2B-blue.svg)](https://developer.apple.com/ios/)
 [![Swift 6.0](https://img.shields.io/badge/Swift-6.0-orange.svg)](https://www.swift.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -27,8 +27,8 @@ no proprietary assets, no cloned logos.
 
 ## Quick Start
 
-**Latest release:** [GitHub Releases](https://github.com/dbudakli1402-collab/VANTA/releases)
-([latest build](https://github.com/dbudakli1402-collab/VANTA/releases/latest)).
+**Latest release:** [GitHub Releases](https://github.com/LaFAirs/VANTA/releases)
+([latest build](https://github.com/LaFAirs/VANTA/releases/latest)).
 
 Every release attaches `VANTA.ipa` + `SHA256SUMS.txt` + `SBOM.json`, with the
 signing status stated in the notes — **Signed** or **Unsigned**, never guessed.
@@ -122,7 +122,7 @@ valid bundle IDs and versions, reachable IPA/icon URLs. See
 Windows-first (see [`Documentation/BUILDING.md`](Documentation/BUILDING.md)):
 
 ```powershell
-git clone https://github.com/dbudakli1402-collab/VANTA.git
+git clone https://github.com/LaFAirs/VANTA.git
 cd VANTA
 # edit on Windows, push → CI builds on the macOS runner
 ```

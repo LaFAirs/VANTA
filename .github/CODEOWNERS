@@ -1,8 +1,8 @@
 # VANTA code ownership. The maintainer reviews everything touching
 # signing, security, releases, and CI before merge.
-* @dbudakli1402-collab
-/.github/workflows/ @dbudakli1402-collab
-/Vanta/Signing/ @dbudakli1402-collab
-/Vanta/Certificates/ @dbudakli1402-collab
-/Vanta/Backup/ @dbudakli1402-collab
-/Scripts/ @dbudakli1402-collab
+* @LaFAirs
+/.github/workflows/ @LaFAirs
+/Vanta/Signing/ @LaFAirs
+/Vanta/Certificates/ @LaFAirs
+/Vanta/Backup/ @LaFAirs
+/Scripts/ @LaFAirs

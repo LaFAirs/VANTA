@@ -4,7 +4,7 @@
 Usage:
   generate-release-notes.py --tag v1.0.0 --version 1.0.0 --build 5 \
       --signing-mode unsigned|signed --sha-file SHA256SUMS.txt \
-      --bundle-id com.vanta.app [--repo dbudakli1402-collab/VANTA]
+      --bundle-id com.vanta.app [--repo LaFAirs/VANTA]
 
 Every value in the notes comes from the actual pipeline (tag, validation,
 checksum file). The signing status always reflects the real mode.
@@ -31,7 +31,7 @@ p.add_argument("--build", required=True)
 p.add_argument("--signing-mode", required=True, choices=["unsigned", "signed"])
 p.add_argument("--sha-file", required=True)
 p.add_argument("--bundle-id", required=True)
-p.add_argument("--repo", default="dbudakli1402-collab/VANTA")
+p.add_argument("--repo", default="LaFAirs/VANTA")
 a = p.parse_args()
 
 sha_path = pathlib.Path(a.sha_file)

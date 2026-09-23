@@ -14,7 +14,7 @@ public enum DeveloperConfig {
 
     // GitHub identity for About page, links, and avatar loading.
     /// GitHub username.
-    public static let githubUsername = "dbudakli1402-collab"
+    public static let githubUsername = "LaFAirs"
 
     /// GitHub profile URL.
     public static var githubProfileURL: URL? {

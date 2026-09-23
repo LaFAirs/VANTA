@@ -39,7 +39,7 @@ Artifact / Release asset
 2. Install Python 3.11+ (for `Scripts/*.py`).
 3. Clone and validate:
    ```powershell
-   git clone https://github.com/dbudakli1402-collab/VANTA.git
+   git clone https://github.com/LaFAirs/VANTA.git
    cd VANTA
    python Scripts/validate-repo.py
    ```
