@@ -23,17 +23,11 @@ public actor Logger {
     private var entries: [LogEntry] = []
     private var listeners: [@Sendable ([LogEntry]) -> Void] = []
 
-    /// Records an entry and mirrors it to OSLog.
+    /// Records an entry and mirrors it to the unified log.
     public func log(_ level: LogLevel, _ message: String) {
         entries.append(LogEntry(level: level, message: message))
         if entries.count > 2000 { entries.removeFirst(entries.count - 2000) }
-        switch level {
-        case .debug: VantaOSLog.vanta.debug("\(message, privacy: .public)")
-        case .info: VantaOSLog.vanta.info("\(message, privacy: .public)")
-        case .success: VantaOSLog.vanta.notice("\(message, privacy: .public)")
-        case .warning: VantaOSLog.vanta.error("\(message, privacy: .public)")
-        case .error: VantaOSLog.vanta.fault("\(message, privacy: .public)")
-        }
+        VantaOSLog.record(level: level, message: message)
         let snapshot = entries
         for listener in listeners { listener(snapshot) }
     }
