@@ -32,12 +32,21 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - name: Install XcodeGen + SwiftLint
-        run: brew install xcodegen swiftlint || brew upgrade xcodegen swiftlint
-      - name: Generate project
+      - name: Install XcodeGen + SwiftLint + SwiftFormat
+        run: brew install xcodegen swiftlint swiftformat || brew upgrade xcodegen swiftlint swiftformat
+      - name: Generate Xcode project
         run: xcodegen generate
-      - name: Lint
-        run: swiftlint --strict || true
+      - name: Verify XcodeGen output is deterministic
+        run: |
+          set -euo pipefail
+          cp -R Vanta.xcodeproj /tmp/Vanta-first.xcodeproj
+          xcodegen generate
+          diff -r /tmp/Vanta-first.xcodeproj Vanta.xcodeproj \
+            && echo "XcodeGen output is deterministic."
+      - name: Lint (strict gate, zero warnings)
+        run: swiftlint --strict
+      - name: Format check (swiftformat)
+        run: swiftformat --lint .
       - name: Build (simulator, no signing)
         run: |
           # pipefail: xcpretty exits 0 even when xcodebuild fails — never mask that.

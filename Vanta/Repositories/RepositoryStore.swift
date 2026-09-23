@@ -1,20 +1,24 @@
 import Foundation
 
-/// Fetches + caches repository manifests (URLSession + URLCache, lazy).
+/// Fetches and caches repository manifests (URLSession + URLCache, lazy).
 public actor RepositoryClient {
+    /// Shared instance.
     public static let shared = RepositoryClient()
+
     private let session: URLSession = {
-        let c = URLSessionConfiguration.default
-        c.urlCache = URLCache(memoryCapacity: 8_000_000, diskCapacity: 50_000_000)
-        c.requestCachePolicy = .returnCacheDataElseLoad
-        return URLSession(configuration: c)
+        let config = URLSessionConfiguration.default
+        config.urlCache = URLCache(memoryCapacity: 8_000_000, diskCapacity: 50_000_000)
+        config.requestCachePolicy = .returnCacheDataElseLoad
+        return URLSession(configuration: config)
     }()
 
+    /// Fetches and validates a manifest.
     public func fetch(url: URL, allowInsecure: Bool) async throws -> AppRepository {
         try Validators.requireSecure(url, acknowledgedInsecure: allowInsecure)
-        let (data, resp) = try await session.data(from: url)
-        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
-            throw VantaError.repositoryInvalid(reason: "Repository returned HTTP \((resp as? HTTPURLResponse)?.statusCode ?? -1).")
+        let (data, response) = try await self.session.data(from: url)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            let status = (response as? HTTPURLResponse)?.statusCode ?? -1
+            throw VantaError.repositoryInvalid(reason: "Repository returned HTTP \(status).")
         }
         return try RepositoryValidator.validate(data: data, sourceURL: url, allowInsecure: allowInsecure)
     }
@@ -22,16 +26,29 @@ public actor RepositoryClient {
 
 /// Registry of user-added repositories.
 public actor RepositoryStore {
+    /// Shared instance.
     public static let shared = RepositoryStore()
     private var repos: [AppRepository] = []
 
-    public func all() -> [AppRepository] { repos }
+    /// All repositories.
+    public func all() -> [AppRepository] { self.repos }
+
+    /// Every app tagged with its repository.
     public func allApps() -> [(repo: AppRepository, app: RepoApp)] {
-        repos.flatMap { r in r.apps.map { (r, $0) } }
+        self.repos.flatMap { repo in repo.apps.map { (repo: repo, app: $0) } }
     }
-    public func add(_ r: AppRepository) {
-        if let i = repos.firstIndex(where: { $0.identifier == r.identifier }) { repos[i] = r }
-        else { repos.append(r) }
+
+    /// Adds or replaces a repository by identifier.
+    public func add(_ repo: AppRepository) {
+        if let index = self.repos.firstIndex(where: { $0.identifier == repo.identifier }) {
+            self.repos[index] = repo
+        } else {
+            self.repos.append(repo)
+        }
     }
-    public func remove(id: UUID) { repos.removeAll { $0.id == id } }
+
+    /// Removes a repository.
+    public func remove(id: UUID) {
+        self.repos.removeAll { $0.id == id }
+    }
 }

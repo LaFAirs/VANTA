@@ -2,43 +2,57 @@ import Foundation
 
 /// GitHub public profile loader with disk caching. Falls back to placeholder offline.
 public actor GitHubAPI {
+    /// Public GitHub user record.
     public struct User: Codable, Sendable {
+        /// Login name.
         public var login: String
-        public var avatar_url: URL?
-        public var html_url: URL?
+        /// Avatar URL, if provided.
+        public var avatarURL: URL?
+        /// Profile URL, if provided.
+        public var htmlURL: URL?
+        /// Display name, if provided.
         public var name: String?
+
+        private enum CodingKeys: String, CodingKey {
+            case login
+            case avatarURL = "avatar_url"
+            case htmlURL = "html_url"
+            case name
+        }
     }
 
+    /// Shared instance.
     public static let shared = GitHubAPI()
-    private let cache = URLCache(memoryCapacity: 4_000_000, diskCapacity: 20_000_000)
     private var cachedAvatar: Data?
     private var lastFetch: Date?
 
+    /// Loads the public profile. Returns nil offline (caller shows fallback).
     public func loadUser(username: String) async -> User? {
         guard let url = URL(string: "https://api.github.com/users/\(username)") else { return nil }
-        var req = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad,
-                             timeoutInterval: 15)
-        req.setValue("VANTA-iOS", forHTTPHeaderField: "User-Agent")
+        var request = URLRequest(url: url, cachePolicy: .returnCacheDataElseLoad,
+                                 timeoutInterval: 15)
+        request.setValue("VANTA-iOS", forHTTPHeaderField: "User-Agent")
         do {
             let session = URLSession(configuration: .default)
-            let (data, resp) = try await session.data(for: req)
-            if (resp as? HTTPURLResponse)?.statusCode == 200 {
-                lastFetch = Date()
+            let (data, response) = try await session.data(for: request)
+            if (response as? HTTPURLResponse)?.statusCode == 200 {
+                self.lastFetch = Date()
                 return try? JSONDecoder().decode(User.self, from: data)
             }
         } catch { /* offline → nil, caller shows fallback */ }
         return nil
     }
 
+    /// Loads avatar bytes with a 24h in-memory cache.
     public func loadAvatarData(from url: URL?) async -> Data? {
-        guard let url else { return cachedAvatar }
+        guard let url else { return self.cachedAvatar }
         if let cachedAvatar, let lastFetch, Date().timeIntervalSince(lastFetch) < 24 * 3600 {
             return cachedAvatar
         }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
-            cachedAvatar = data
+            self.cachedAvatar = data
             return data
-        } catch { return cachedAvatar }
+        } catch { return self.cachedAvatar }
     }
 }

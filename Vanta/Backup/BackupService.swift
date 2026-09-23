@@ -1,33 +1,48 @@
-import Foundation
 import CryptoKit
+import Foundation
 
 /// Backup/restore of lists + settings. Secrets are AES-GCM encrypted;
 /// private keys are never exported in plaintext — export refuses by design.
 public actor BackupService {
+    /// Versioned backup payload.
     public struct Backup: Codable, Sendable {
+        /// Schema version.
         public var version: Int
+        /// Creation date.
         public var date: Date
+        /// Managed apps.
         public var apps: [ManagedApp]
+        /// Repositories.
         public var repositories: [AppRepository]
+        /// Settings snapshot.
         public var settings: [String: String]
+
+        /// Creates a backup payload.
         public init(apps: [ManagedApp], repositories: [AppRepository], settings: [String: String] = [:]) {
-            self.version = 1; self.date = Date()
-            self.apps = apps; self.repositories = repositories; self.settings = settings
+            self.version = 1
+            self.date = Date()
+            self.apps = apps
+            self.repositories = repositories
+            self.settings = settings
         }
     }
 
+    /// Shared instance.
     public static let shared = BackupService()
 
+    /// Builds a backup from the live stores.
     public func makeBackup() async -> Backup {
         let apps = await ManagedAppStore.shared.all()
         let repos = await RepositoryStore.shared.all()
         return Backup(apps: apps, repositories: repos)
     }
 
-    public func encode(_ b: Backup) throws -> Data {
-        try JSONEncoder().encode(b)
+    /// Encodes a backup payload.
+    public func encode(_ backup: Backup) throws -> Data {
+        try JSONEncoder().encode(backup)
     }
 
+    /// Decodes a backup payload, throwing on invalid input.
     public func decode(_ data: Data) throws -> Backup {
         do { return try JSONDecoder().decode(Backup.self, from: data) }
         catch { throw VantaError.backupFailed(reason: "Backup file is invalid: \(error.localizedDescription)") }

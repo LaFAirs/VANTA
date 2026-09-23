@@ -1,6 +1,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// Managed apps with refresh and uninstall actions.
 struct AppsView: View {
     @EnvironmentObject private var appState: AppState
     @State private var apps: [ManagedApp] = []
@@ -11,48 +12,65 @@ struct AppsView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if let error { VantaErrorCard(error) }
-                    if apps.isEmpty {
+                    if self.apps.isEmpty {
                         VantaCard {
                             VStack(spacing: 8) {
                                 Text("No managed apps").font(.headline)
-                                Text("Import an IPA to get started.").font(.subheadline).foregroundStyle(VantaDS.secondaryText)
-                                VantaPrimaryButton("Import IPA") { appState.showingIPAImport = true }
+                                Text("Import an IPA to get started.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(VantaDS.secondaryText)
+                                VantaPrimaryButton("Import IPA") {
+                                    self.appState.showingIPAImport = true
+                                }
                             }
                         }
                     }
-                    ForEach(apps) { app in
-                        AppCard(app: app,
-                                onRefresh: { Task { await refresh(app) } },
-                                onDelete: { Task { await ManagedAppStore.shared.remove(bundleID: app.bundleID); await load() } },
-                                onDetails: {})
+                    ForEach(self.apps) { app in
+                        AppCard(
+                            app: app,
+                            onRefresh: { Task { await self.refresh(app) } },
+                            onDelete: {
+                                Task {
+                                    await ManagedAppStore.shared.remove(bundleID: app.bundleID)
+                                    await self.load()
+                                }
+                            },
+                            onDetails: {}
+                        )
                     }
                 }.padding()
             }
             .background(VantaDS.background.ignoresSafeArea())
             .navigationTitle("Apps")
             .toolbar {
-                Button { appState.showingIPAImport = true } label: { Image(systemName: "plus") }
+                Button { self.appState.showingIPAImport = true } label: {
+                    Image(systemName: "plus")
+                }
             }
-            .sheet(isPresented: $appState.showingIPAImport) { ImportSheet() }
-            .task { await load() }
+            .sheet(isPresented: self.$appState.showingIPAImport) { ImportSheet() }
+            .task { await self.load() }
         }
     }
 
-    private func load() async { apps = await ManagedAppStore.shared.all() }
+    private func load() async {
+        self.apps = await ManagedAppStore.shared.all()
+    }
 
     private func refresh(_ app: ManagedApp) async {
         let certs = await CertificateStore.shared.activeCertificates()
         guard certs.first != nil else {
-            error = .refreshUnavailable(reason: "No active certificate. Import a .p12 identity first.")
+            self.error = .refreshUnavailable(reason: "No active certificate. Import a .p12 identity first.")
             return
         }
-        await ManagedAppStore.shared.markRefresh(bundleID: app.bundleID,
-                                                 expiresAt: Calendar.current.date(byAdding: .day, value: 7, to: Date()))
-        await load()
+        await ManagedAppStore.shared.markRefresh(
+            bundleID: app.bundleID,
+            expiresAt: Calendar.current.date(byAdding: .day, value: 7, to: Date())
+        )
+        await self.load()
     }
 }
 
-/// Import entry: Files picker + URL download. Drag & Drop handled by `.dropDestination` on iPad.
+/// Import entry: Files picker + URL download.
 struct ImportSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var urlText = ""
@@ -64,27 +82,30 @@ struct ImportSheet: View {
         NavigationStack {
             VStack(spacing: 14) {
                 if let error { VantaErrorCard(error) }
-                VantaPrimaryButton(picking ? "Picking…" : "Choose IPA from Files") {
-                    picking = true
+                VantaPrimaryButton(self.picking ? "Picking…" : "Choose IPA from Files") {
+                    self.picking = true
                 }
-                .fileImporter(isPresented: $picking, allowedContentTypes: [.init(filenameExtension: "ipa") ?? .zip]) { res in
+                .fileImporter(
+                    isPresented: self.$picking,
+                    allowedContentTypes: [.init(filenameExtension: "ipa") ?? .zip]
+                ) { result in
                     Task {
-                        switch res {
+                        switch result {
                         case .success(let url):
                             _ = await IPAImporter.shared.enqueueFile(at: url)
                             await Logger.shared.log(.success, "Queued \(url.lastPathComponent)")
-                            dismiss()
-                        case .failure(let e):
-                            error = .ipaCorrupt(reason: e.localizedDescription)
+                            self.dismiss()
+                        case .failure(let caught):
+                            self.error = .ipaCorrupt(reason: caught.localizedDescription)
                         }
                     }
                 }
                 HStack {
-                    TextField("https://example.com/app.ipa", text: $urlText)
+                    TextField("https://example.com/app.ipa", text: self.$urlText)
                         .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         .accessibilityLabel("IPA download URL")
-                    Button(busy ? "…" : "Get") { Task { await fetchURL() } }
+                    Button(self.busy ? "…" : "Get") { Task { await self.fetchURL() } }
                         .buttonStyle(.borderedProminent).tint(VantaDS.accent)
                 }
                 Spacer()
@@ -98,13 +119,16 @@ struct ImportSheet: View {
 
     private func fetchURL() async {
         do {
-            busy = true
-            let url = try Validators.parseURL(urlText)
+            self.busy = true
+            let url = try Validators.parseURL(self.urlText)
             _ = try await IPAImporter.shared.enqueueURL(url, allowInsecure: false)
             await Logger.shared.log(.success, "Downloaded \(url.lastPathComponent)")
-            dismiss()
-        } catch let e as VantaError { self.error = e }
-        catch { self.error = .ipaCorrupt(reason: error.localizedDescription) }
-        busy = false
+            self.dismiss()
+        } catch let caught as VantaError {
+            self.error = caught
+        } catch {
+            self.error = .ipaCorrupt(reason: error.localizedDescription)
+        }
+        self.busy = false
     }
 }

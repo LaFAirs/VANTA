@@ -6,6 +6,20 @@ and [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Repo health: CODEOWNERS, FUNDING, dependabot, CodeQL, dependency review,
+  social preview artwork, SBOM releases
+- Strict quality gates: `swiftlint --strict`, `swiftformat --lint`, deterministic
+  XcodeGen check, expanded lint rules
+- Signing pipeline as cancellable `AsyncStream` with injected collaborators and
+  120s timeout; signers stage real files with SHA-256 manifests
+- Stable `VANTA_Exxx` error codes, `LocalizedError` conformance, de/en strings
+- `DateProvider` clock, validated model inits, Keychain hardening, backup rotation
+- Privacy manifest, entitlements, AppIcon catalog, Swift 6.0
+
+### Fixed
+- iPad sidebar certificate destination; iPhone certificates tab
+
 ## [1.0.0] - 2026-09-23
 
 ### Added

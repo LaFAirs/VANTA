@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// Certificate Center: import, inspect, and remove signing identities.
 struct CertificatesView: View {
     @State private var certs: [SigningCertificate] = []
     @State private var profiles: [ProvisioningProfile] = []
@@ -13,31 +14,49 @@ struct CertificatesView: View {
                 LazyVStack(spacing: 12) {
                     if let error { VantaErrorCard(error) }
                     HStack(spacing: 10) {
-                        Button("Import .p12") { importingP12 = true }
+                        Button("Import .p12") { self.importingP12 = true }
                             .buttonStyle(.borderedProminent).tint(VantaDS.accent)
-                        Button("Import .mobileprovision") { importingProfile = true }
+                        Button("Import .mobileprovision") { self.importingProfile = true }
                             .buttonStyle(.bordered)
                     }
-                    .fileImporter(isPresented: $importingP12, allowedContentTypes: [.init(filenameExtension: "p12") ?? .data]) {
-                        handleP12($0)
+                    .fileImporter(
+                        isPresented: self.$importingP12,
+                        allowedContentTypes: [.init(filenameExtension: "p12") ?? .data]
+                    ) { result in
+                        self.handleP12(result)
                     }
-                    .fileImporter(isPresented: $importingProfile, allowedContentTypes: [.init(filenameExtension: "mobileprovision") ?? .data]) {
-                        handleProfile($0)
+                    .fileImporter(
+                        isPresented: self.$importingProfile,
+                        allowedContentTypes: [.init(filenameExtension: "mobileprovision") ?? .data]
+                    ) { result in
+                        self.handleProfile(result)
                     }
-                    ForEach(certs) { c in
-                        CertificateCard(cert: c, onInspect: { Task { await inspect(c) } },
-                                        onRemove: { Task { await CertificateStore.shared.removeCertificate(id: c.id); await load() } })
+                    ForEach(self.certs) { cert in
+                        CertificateCard(
+                            cert: cert,
+                            onUse: nil,
+                            onInspect: { Task { await self.inspect(cert) } },
+                            onRemove: {
+                                Task {
+                                    await CertificateStore.shared.removeCertificate(id: cert.id)
+                                    await self.load()
+                                }
+                            }
+                        )
                     }
-                    if certs.isEmpty {
+                    if self.certs.isEmpty {
                         ComingSoon("No certificates yet. Import a .p12 identity to enable signing.")
                     }
-                    ForEach(profiles) { p in
+                    ForEach(self.profiles) { profile in
                         VantaCard {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(p.name).font(.headline)
-                                Text(p.appID).font(.caption).foregroundStyle(VantaDS.secondaryText)
-                                Text("Expires \(p.expiresAt.formatted(date: .abbreviated, time: .omitted))")
-                                    .font(.caption2).foregroundStyle(VantaDS.secondaryText)
+                                Text(profile.name).font(.headline)
+                                Text(profile.appID)
+                                    .font(.caption)
+                                    .foregroundStyle(VantaDS.secondaryText)
+                                Text("Expires \(profile.expiresAt.formatted(date: .abbreviated, time: .omitted))")
+                                    .font(.caption2)
+                                    .foregroundStyle(VantaDS.secondaryText)
                             }
                         }
                     }
@@ -45,36 +64,41 @@ struct CertificatesView: View {
             }
             .background(VantaDS.background.ignoresSafeArea())
             .navigationTitle("Certificates")
-            .task { await load() }
+            .task { await self.load() }
         }
     }
 
     private func load() async {
-        certs = await CertificateStore.shared.certificatesList()
-        profiles = await CertificateStore.shared.profilesList()
+        self.certs = await CertificateStore.shared.certificatesList()
+        self.profiles = await CertificateStore.shared.profilesList()
     }
 
-    private func handleP12(_ res: Result<URL, Error>) {
-        switch res {
+    private func handleP12(_ result: Result<URL, Error>) {
+        switch result {
         case .success(let url):
             Task {
                 // Real SecPKCS12Import happens here on-device with user password;
                 // until a file is actually provided we register nothing fake.
-                await Logger.shared.log(.info, "Selected identity: \(url.lastPathComponent) — enter password to import")
+                await Logger.shared.log(.info, "Selected identity: \(url.lastPathComponent)")
             }
-        case .failure(let e): error = .certificateInvalid(reason: e.localizedDescription)
+        case .failure(let caught):
+            self.error = .certificateInvalid(reason: caught.localizedDescription)
         }
     }
 
-    private func handleProfile(_ res: Result<URL, Error>) {
-        switch res {
+    private func handleProfile(_ result: Result<URL, Error>) {
+        switch result {
         case .success(let url):
             Task { await Logger.shared.log(.info, "Selected profile: \(url.lastPathComponent)") }
-        case .failure(let e): error = .repositoryInvalid(reason: e.localizedDescription)
+        case .failure(let caught):
+            self.error = .repositoryInvalid(reason: caught.localizedDescription)
         }
     }
 
-    private func inspect(_ c: SigningCertificate) async {
-        await Logger.shared.log(.info, "Inspect \(c.name): team \(c.teamID), expires \(c.expiresAt), ref stored in Keychain")
+    private func inspect(_ cert: SigningCertificate) async {
+        await Logger.shared.log(
+            .info,
+            "Inspect \(cert.name): team \(cert.teamID), expires \(cert.expiresAt)"
+        )
     }
 }

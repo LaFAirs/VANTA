@@ -16,42 +16,54 @@ public enum Keychain {
         return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
     }
 
+    /// Loads identity data for a reference, if present.
     public static func load(reference: String) -> Data? {
-        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                kSecAttrService as String: service,
-                                kSecAttrAccount as String: reference,
-                                kSecReturnData as String: true]
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecAttrService as String: service,
+                                    kSecAttrAccount as String: reference,
+                                    kSecReturnData as String: true]
         var out: AnyObject?
-        guard SecItemCopyMatching(q as CFDictionary, &out) == errSecSuccess else { return nil }
+        guard SecItemCopyMatching(query as CFDictionary, &out) == errSecSuccess else { return nil }
         return out as? Data
     }
 
+    /// Deletes an identity reference.
     public static func delete(reference: String) {
-        let q: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                kSecAttrService as String: service,
-                                kSecAttrAccount as String: reference]
-        SecItemDelete(q as CFDictionary)
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecAttrService as String: service,
+                                    kSecAttrAccount as String: reference]
+        SecItemDelete(query as CFDictionary)
     }
 }
 
 /// Parses .p12 metadata claims supplied by the importer (real PKCS12 parsing
 /// happens via SecPKCS12Import on-device; this struct keeps UI/test layers pure).
 public enum CertificateParser {
+    /// Identity claims extracted from an import.
     public struct Claim: Sendable {
+        /// Common name.
         public var commonName: String
+        /// Apple Team ID.
         public var teamID: String
+        /// Expiry date.
         public var expiresAt: Date
+
+        /// Creates a claim.
         public init(commonName: String, teamID: String, expiresAt: Date) {
-            self.commonName = commonName; self.teamID = teamID; self.expiresAt = expiresAt
+            self.commonName = commonName
+            self.teamID = teamID
+            self.expiresAt = expiresAt
         }
     }
 
+    /// Validity state for an expiry date.
     public static func status(for expiresAt: Date, now: Date = Date()) -> CertificateStatus {
         if Validators.isExpired(expiresAt, now: now) { return .expired }
         if Validators.daysUntil(expiresAt, now: now) <= 14 { return .expiringSoon }
         return .active
     }
 
+    /// Validates a claim into a certificate record. Throws on invalid input.
     public static func validate(_ claim: Claim, now: Date = Date()) throws -> SigningCertificate {
         guard !claim.commonName.isEmpty, !claim.teamID.isEmpty else {
             throw VantaError.certificateInvalid(reason: "Certificate is missing its identity (CN/Team ID).")
@@ -69,6 +81,7 @@ public enum CertificateParser {
 /// Parses .mobileprovision plists (CMS-wrapped on disk; unwrapping happens in
 /// `ProvisioningProfileStore` with real data — this stays a pure plist mapper).
 public enum ProvisioningProfileParser {
+    /// Parses a profile plist dictionary. Throws on missing or expired data.
     public static func parse(plist: [String: Any]) throws -> ProvisioningProfile {
         guard let name = plist["Name"] as? String,
               let appID = (plist["Entitlements"] as? [String: Any])?["application-identifier"] as? String,

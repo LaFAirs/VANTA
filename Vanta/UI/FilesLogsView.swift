@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// On-device file browser across VANTA storage areas.
 struct FilesView: View {
     @State private var area: VantaFileStore.Area = .ipas
     @State private var items: [VantaFileStore.Item] = []
@@ -8,23 +9,29 @@ struct FilesView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Area", selection: $area) {
-                    ForEach(VantaFileStore.Area.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                Picker("Area", selection: self.$area) {
+                    ForEach(VantaFileStore.Area.allCases, id: \.self) {
+                        Text($0.rawValue).tag($0)
+                    }
                 }.pickerStyle(.segmented).padding(.horizontal)
                 List {
-                    ForEach(items) { i in
+                    ForEach(self.items) { item in
                         HStack {
-                            Image(systemName: icon(for: i.url)).foregroundStyle(VantaDS.accent)
+                            Image(systemName: self.icon(for: item.url)).foregroundStyle(VantaDS.accent)
                             VStack(alignment: .leading) {
-                                Text(i.url.lastPathComponent).lineLimit(1)
-                                Text(ByteCountFormatter.string(fromByteCount: i.size, countStyle: .file))
+                                Text(item.url.lastPathComponent).lineLimit(1)
+                                Text(ByteCountFormatter.string(fromByteCount: item.size, countStyle: .file))
                                     .font(.caption).foregroundStyle(VantaDS.secondaryText)
                             }
                             Spacer()
-                            ShareLink(item: i.url) { Image(systemName: "square.and.arrow.up") }
+                            ShareLink(item: item.url) { Image(systemName: "square.and.arrow.up") }
                         }
                         .swipeActions {
-                            Button(role: .destructive) { Task { await delete(i) } } label: { Label("Delete", systemImage: "trash") }
+                            Button(role: .destructive) {
+                                Task { await self.delete(item) }
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
                     }
                 }
@@ -33,18 +40,23 @@ struct FilesView: View {
             }
             .background(VantaDS.background.ignoresSafeArea())
             .navigationTitle("Files")
-            .task(id: area) { await load() }
+            .task(id: self.area) { await self.load() }
         }
     }
 
     private func load() async {
-        do { items = try await VantaFileStore.shared.list(area) }
-        catch { self.error = .ipaNotFound }
+        do {
+            self.items = try await VantaFileStore.shared.list(self.area)
+        } catch {
+            self.error = .ipaNotFound
+        }
     }
-    private func delete(_ i: VantaFileStore.Item) async {
-        try? await VantaFileStore.shared.delete(i.url)
-        await load()
+
+    private func delete(_ item: VantaFileStore.Item) async {
+        try? await VantaFileStore.shared.delete(item.url)
+        await self.load()
     }
+
     private func icon(for url: URL) -> String {
         switch url.pathExtension.lowercased() {
         case "ipa": return "app.fill"
@@ -56,20 +68,22 @@ struct FilesView: View {
     }
 }
 
+/// Categorized log viewer with export.
 struct LogsView: View {
     @EnvironmentObject private var center: LogCenter
-    @State private var filter: LogLevel? = nil
+    @State private var filter: LogLevel?
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(shown) { e in
+                ForEach(self.shown) { entry in
                     HStack(alignment: .top, spacing: 8) {
-                        Circle().fill(color(e.level)).frame(width: 8, height: 8).padding(.top, 6)
+                        Circle().fill(self.color(entry.level)).frame(width: 8, height: 8).padding(.top, 6)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(e.message).font(.subheadline)
-                            Text("\(e.date.formatted(date: .omitted, time: .standard)) · \(e.level.rawValue.uppercased())")
-                                .font(.caption2).foregroundStyle(VantaDS.secondaryText)
+                            Text(entry.message).font(.subheadline)
+                            Text(self.subtitle(for: entry))
+                                .font(.caption2)
+                                .foregroundStyle(VantaDS.secondaryText)
                         }
                     }
                 }
@@ -79,19 +93,25 @@ struct LogsView: View {
             .navigationTitle("Logs")
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
-                    ShareLink(item: center.exportText) { Image(systemName: "square.and.arrow.up") }
-                    Button("Clear", role: .destructive) { center.clear() }
+                    ShareLink(item: self.center.exportText) { Image(systemName: "square.and.arrow.up") }
+                    Button("Clear", role: .destructive) { self.center.clear() }
                 }
             }
         }
     }
 
     private var shown: [LogEntry] {
-        guard let filter else { return center.entries.reversed() }
-        return center.entries.filter { $0.level == filter }.reversed()
+        guard let filter else { return self.center.entries.reversed() }
+        return self.center.entries.filter { $0.level == filter }.reversed()
     }
-    private func color(_ l: LogLevel) -> Color {
-        switch l {
+
+    private func subtitle(for entry: LogEntry) -> String {
+        let timestamp = entry.date.formatted(date: .omitted, time: .standard)
+        let level = entry.level.rawValue.uppercased()
+        return "\(timestamp) · \(level)"
+    }
+
+    private func color(_ level: LogLevel) -> Color {        switch level {
         case .info: return VantaDS.accent
         case .success: return VantaDS.success
         case .warning: return VantaDS.warning

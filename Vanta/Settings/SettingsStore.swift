@@ -1,9 +1,21 @@
 import SwiftUI
 
+/// Color scheme preference.
 public enum Appearance: String, CaseIterable {
-    case system, dark, light
+    /// Follows the system.
+    case system
+    /// Always dark (VANTA default look).
+    case dark
+    /// Always light.
+    case light
+
+    /// Mapped SwiftUI color scheme, if overridden.
     var colorScheme: ColorScheme? {
-        switch self { case .system: return nil; case .dark: return .dark; case .light: return .light }
+        switch self {
+        case .system: return nil
+        case .dark: return .dark
+        case .light: return .light
+        }
     }
 }
 
@@ -34,17 +46,18 @@ final class SettingsStore: ObservableObject {
     @AppStorage("debugLogs") var debugLogs = false
 
     var appearance: Appearance {
-        get { Appearance(rawValue: appearanceRaw) ?? .dark }
-        set { appearanceRaw = newValue.rawValue }
+        get { Appearance(rawValue: self.appearanceRaw) ?? .dark }
+        set { self.appearanceRaw = newValue.rawValue }
     }
 
+    /// Removes all stored values, restoring defaults.
     func reset() {
-        for k in ["appearance", "largerText", "reduceMotion", "notifications",
-                  "defaultSigner", "autoVerify", "repoUpdateIntervalH",
-                  "allowInsecureRepos", "confirmBeforeInstall",
-                  "installNotifications", "debugLogs"] {
-            UserDefaults.standard.removeObject(forKey: k)
+        for key in ["appearance", "largerText", "reduceMotion", "notifications",
+                    "defaultSigner", "autoVerify", "repoUpdateIntervalH",
+                    "allowInsecureRepos", "confirmBeforeInstall",
+                    "installNotifications", "debugLogs"] {
+            UserDefaults.standard.removeObject(forKey: key)
         }
-        objectWillChange.send()
+        self.objectWillChange.send()
     }
 }

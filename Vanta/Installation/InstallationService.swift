@@ -4,8 +4,10 @@ import UIKit
 /// Installation gateway. On stock iOS, direct silent install of arbitrary IPAs
 /// is not available — VANTA says so explicitly instead of faking it.
 public actor InstallationService {
+    /// Shared instance.
     public static let shared = InstallationService()
 
+    /// True when direct on-device installation is possible (always false on stock iOS).
     public func canInstallOnDevice() -> Bool { false }
 
     public func verify(package: SignedPackage) async throws {
@@ -17,6 +19,7 @@ public actor InstallationService {
         await Logger.shared.log(.success, "Signature metadata verified for \(package.original.bundleID)")
     }
 
+    /// Attempts installation, throwing the real reason when unavailable.
     public func install(package: SignedPackage) async throws {
         if !canInstallOnDevice() {
             throw VantaError.installationUnavailable(
@@ -25,6 +28,7 @@ public actor InstallationService {
         }
     }
 
+    /// Guides toward device management (no public deep link exists).
     public func openSettingsToDeviceManagement() {
         // Public API only: deep-linking to VPN & Device Management is not exposed;
         // guide the user instead.

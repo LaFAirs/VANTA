@@ -1,6 +1,8 @@
 import SwiftUI
 
+/// Guided signing: pick a signer, certificate, and profile, then run the pipeline.
 struct SigningView: View {
+    /// The analyzed package to sign.
     let package: IPAPackage
     @State private var certs: [SigningCertificate] = []
     @State private var profiles: [ProvisioningProfile] = []
@@ -16,43 +18,52 @@ struct SigningView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 14) {
-                analysisCard
-                if let e = error { VantaErrorCard(e) { self.error = nil } }
-                signerCard
-                certCard
-                profileCard
-                PipelineProgressView(phase: phase, progress: progress)
-                if !status.isEmpty { Text(status).font(.caption).foregroundStyle(VantaDS.secondaryText) }
-                VantaPrimaryButton(running ? "Signing…" : "Sign & Verify") { Task { await run() } }
-                    .disabled(running || selectedCert == nil || selectedProfile == nil)
+                self.analysisCard
+                if let currentError = error { VantaErrorCard(currentError) { self.error = nil } }
+                self.signerCard
+                self.certCard
+                self.profileCard
+                PipelineProgressView(phase: self.phase, progress: self.progress)
+                if !self.status.isEmpty {
+                    Text(self.status).font(.caption).foregroundStyle(VantaDS.secondaryText)
+                }
+                VantaPrimaryButton(self.running ? "Signing…" : "Sign & Verify") {
+                    Task { await self.run() }
+                }
+                .disabled(self.running || self.selectedCert == nil || self.selectedProfile == nil)
             }.padding()
         }
         .background(VantaDS.background.ignoresSafeArea())
         .navigationTitle("Signing")
         .task {
-            certs = await CertificateStore.shared.certificatesList()
-            profiles = await CertificateStore.shared.profilesList()
-            selectedCert = certs.first
-            selectedProfile = await CertificateStore.shared.eligibleProfiles(bundleID: package.bundleID).first
+            self.certs = await CertificateStore.shared.certificatesList()
+            self.profiles = await CertificateStore.shared.profilesList()
+            self.selectedCert = self.certs.first
+            self.selectedProfile = await CertificateStore.shared
+                .eligibleProfiles(bundleID: self.package.bundleID).first
         }
     }
 
     private var analysisCard: some View {
         VantaCard {
             VStack(alignment: .leading, spacing: 4) {
-                Text(package.name).font(.headline)
-                Text(package.bundleID).font(.caption).foregroundStyle(VantaDS.secondaryText)
-                Text("v\(package.version) (\(package.build)) · min \(package.minimumOS) · \(package.architectures.joined(separator: ", "))")
-                    .font(.caption).foregroundStyle(VantaDS.secondaryText)
+                Text(self.package.name).font(.headline)
+                Text(self.package.bundleID).font(.caption).foregroundStyle(VantaDS.secondaryText)
+                Text(self.analysisSubtitle).font(.caption).foregroundStyle(VantaDS.secondaryText)
             }
         }
+    }
+
+    private var analysisSubtitle: String {
+        let architectures = self.package.architectures.joined(separator: ", ")
+        return "v\(self.package.version) (\(self.package.build)) · min \(self.package.minimumOS) · \(architectures)"
     }
 
     private var signerCard: some View {
         VantaCard {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Signer").font(.headline)
-                Picker("Signer", selection: $signerID) {
+                Picker("Signer", selection: self.$signerID) {
                     Text("Local Certificate").tag("local")
                     Text("Imported Certificate").tag("imported")
                     Text("Personal Team").tag("personal")
@@ -66,10 +77,16 @@ struct SigningView: View {
         VantaCard {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Certificate").font(.headline)
-                Picker("Certificate", selection: $selectedCert) {
-                    ForEach(certs) { c in Text("\(c.name) (\(c.teamID))").tag(Optional(c)) }
+                Picker("Certificate", selection: self.$selectedCert) {
+                    ForEach(self.certs) { cert in
+                        Text("\(cert.name) (\(cert.teamID))").tag(Optional(cert))
+                    }
                 }
-                if certs.isEmpty { Text("No certificates — import a .p12 first.").font(.subheadline).foregroundStyle(VantaDS.warning) }
+                if self.certs.isEmpty {
+                    Text("No certificates — import a .p12 first.")
+                        .font(.subheadline)
+                        .foregroundStyle(VantaDS.warning)
+                }
             }
         }
     }
@@ -78,16 +95,22 @@ struct SigningView: View {
         VantaCard {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Provisioning profile").font(.headline)
-                Picker("Profile", selection: $selectedProfile) {
-                    ForEach(profiles) { p in Text(p.name).tag(Optional(p)) }
+                Picker("Profile", selection: self.$selectedProfile) {
+                    ForEach(self.profiles) { profile in
+                        Text(profile.name).tag(Optional(profile))
+                    }
                 }
-                if profiles.isEmpty { Text("No profiles — import a .mobileprovision first.").font(.subheadline).foregroundStyle(VantaDS.warning) }
+                if self.profiles.isEmpty {
+                    Text("No profiles — import a .mobileprovision first.")
+                        .font(.subheadline)
+                        .foregroundStyle(VantaDS.warning)
+                }
             }
         }
     }
 
     private func signer() -> any SignerProvider {
-        switch signerID {
+        switch self.signerID {
         case "imported": return ImportedCertificateSigner()
         case "personal": return PersonalTeamSigner()
         case "remote": return RemoteSigner()
@@ -102,12 +125,16 @@ struct SigningView: View {
             self.error = .signerUnavailable(availability.reason ?? "Signer is not ready.")
             return
         }
-        running = true
+        self.running = true
         self.error = nil
-        phase = .processing
+        self.phase = .processing
         var outcome: SigningPipeline.Outcome = .ongoing
-        let stream = SigningPipeline.shared.run(package: self.package, certificate: cert,
-                                                profile: profile, signer: self.signer())
+        let stream = SigningPipeline.shared.run(
+            package: self.package,
+            certificate: cert,
+            profile: profile,
+            signer: self.signer()
+        )
         for await report in stream {
             self.progress = report.progress
             self.status = report.message
@@ -124,33 +151,50 @@ struct SigningView: View {
         case .succeeded(let staged):
             do {
                 try await ManagedAppStore.shared.upsert(ManagedApp(
-                    name: self.package.name, bundleID: self.package.bundleID,
-                    version: self.package.version, build: self.package.build,
-                    status: .installed, teamID: cert.teamID))
+                    name: self.package.name,
+                    bundleID: self.package.bundleID,
+                    version: self.package.version,
+                    build: self.package.build,
+                    status: .installed,
+                    teamID: cert.teamID
+                ))
                 await Logger.shared.log(.success, "Installed record for \(staged.original.bundleID)")
             } catch let updateError as VantaError {
                 self.error = updateError
-                phase = .idle
+                self.phase = .idle
             } catch {
                 self.error = .signingFailed(reason: error.localizedDescription)
-                phase = .idle
+                self.phase = .idle
             }
         case .failed(let pipelineError):
             self.error = pipelineError
-            phase = .idle
+            self.phase = .idle
         case .ongoing:
             self.error = .signingFailed(reason: "Signing pipeline ended without a result.")
-            phase = .idle
+            self.phase = .idle
         }
-        running = false
+        self.running = false
     }
 }
 
+/// Picker support: certificates compare by identity.
 extension SigningCertificate: Hashable {
-    public func hash(into h: inout Hasher) { h.combine(id) }
-    public static func == (l: SigningCertificate, r: SigningCertificate) -> Bool { l.id == r.id }
+    /// Hashes the identity.
+    public func hash(into hasher: inout Hasher) { hasher.combine(self.id) }
+
+    /// Compares identities.
+    public static func == (lhs: SigningCertificate, rhs: SigningCertificate) -> Bool {
+        lhs.id == rhs.id
+    }
 }
+
+/// Picker support: profiles compare by identity.
 extension ProvisioningProfile: Hashable {
-    public func hash(into h: inout Hasher) { h.combine(id) }
-    public static func == (l: ProvisioningProfile, r: ProvisioningProfile) -> Bool { l.id == r.id }
+    /// Hashes the identity.
+    public func hash(into hasher: inout Hasher) { hasher.combine(self.id) }
+
+    /// Compares identities.
+    public static func == (lhs: ProvisioningProfile, rhs: ProvisioningProfile) -> Bool {
+        lhs.id == rhs.id
+    }
 }

@@ -3,11 +3,17 @@ import Foundation
 /// Pure IPA analyzer: parses Info.plist bytes + filename heuristics.
 /// Real ZIP parsing happens on-device via the importer; this layer stays testable.
 public enum IPAAnalyzer {
+    /// Analyzed metadata.
     public struct Info: Sendable {
+        /// Display name.
         public var name: String
+        /// Bundle identifier.
         public var bundleID: String
+        /// Marketing version.
         public var version: String
+        /// Build number.
         public var build: String
+        /// Minimum OS version.
         public var minimumOS: String
     }
 
@@ -38,7 +44,7 @@ public enum IPAAnalyzer {
 
     /// Entitlement subset check: requested must be ⊆ granted by the profile.
     public static func missingEntitlements(requested: [String], granted: [String]) -> [String] {
-        let g = Set(granted)
-        return requested.filter { !g.contains($0) }
+        let grantedSet = Set(granted)
+        return requested.filter { !grantedSet.contains($0) }
     }
 }

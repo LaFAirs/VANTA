@@ -2,40 +2,49 @@ import Foundation
 
 /// Source of truth for managed apps. Actor → no data races.
 public actor ManagedAppStore {
+    /// Shared instance.
     public static let shared = ManagedAppStore()
     private var apps: [ManagedApp] = []
     private var activity: [ActivityEvent] = []
 
-    public func all() -> [ManagedApp] { apps }
+    /// All managed apps.
+    public func all() -> [ManagedApp] { self.apps }
+
+    /// Apps needing a refresh.
     public func needingRefresh() -> [ManagedApp] {
-        apps.filter { $0.status == .needsRefresh || $0.status == .expired }
+        self.apps.filter { $0.status == .needsRefresh || $0.status == .expired }
     }
+
+    /// Recent activity, newest first.
     public func recentActivity(limit: Int = 8) -> [ActivityEvent] {
-        Array(activity.suffix(limit).reversed())
+        Array(self.activity.suffix(limit).reversed())
     }
 
+    /// Inserts or replaces an app by bundle ID.
     public func upsert(_ app: ManagedApp) {
-        if let i = apps.firstIndex(where: { $0.bundleID == app.bundleID }) {
-            apps[i] = app
+        if let index = self.apps.firstIndex(where: { $0.bundleID == app.bundleID }) {
+            self.apps[index] = app
         } else {
-            apps.append(app)
+            self.apps.append(app)
         }
-        record("\(app.name) updated (\(app.version))")
+        self.record("\(app.name) updated (\(app.version))")
     }
 
+    /// Removes an app by bundle ID.
     public func remove(bundleID: String) {
-        apps.removeAll { $0.bundleID == bundleID }
-        record("Removed \(bundleID)")
+        self.apps.removeAll { $0.bundleID == bundleID }
+        self.record("Removed \(bundleID)")
     }
 
+    /// Marks an app refreshed with a new expiry.
     public func markRefresh(bundleID: String, expiresAt: Date?) {
-        guard let i = apps.firstIndex(where: { $0.bundleID == bundleID }) else { return }
-        apps[i].markRefreshed(expiresAt: expiresAt)
-        record("\(apps[i].name) refreshed")
+        guard let index = self.apps.firstIndex(where: { $0.bundleID == bundleID }) else { return }
+        self.apps[index].markRefreshed(expiresAt: expiresAt)
+        self.record("\(self.apps[index].name) refreshed")
     }
 
     private func record(_ message: String) {
-        activity.append(ActivityEvent(message: message))
-        if activity.count > 200 { activity.removeFirst(activity.count - 200) }
+        self.activity.append(ActivityEvent(message: message))
+        if self.activity.count > 200 { self.activity.removeFirst(self.activity.count - 200) }
     }
 }

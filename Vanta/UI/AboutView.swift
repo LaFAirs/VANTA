@@ -10,15 +10,15 @@ struct AboutView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                logoHeader
-                developerCard
-                repositoryCard
-                linksCard
+                self.logoHeader
+                self.developerCard
+                self.repositoryCard
+                self.linksCard
             }.padding()
         }
         .background(VantaDS.background.ignoresSafeArea())
         .navigationTitle("About")
-        .task { await load() }
+        .task { await self.load() }
     }
 
     private var logoHeader: some View {
@@ -52,11 +52,14 @@ struct AboutView: View {
                 HStack(spacing: 12) {
                     Group {
                         if let avatar { avatar.resizable() }
-                        else if loadingAvatar { ProgressView().tint(VantaDS.accent) }
+                        else if self.loadingAvatar { ProgressView().tint(VantaDS.accent) }
                         else {
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .fill(VantaDS.secondary)
-                                .overlay(Text(String(DeveloperConfig.githubUsername.prefix(1))).bold().foregroundStyle(VantaDS.accent))
+                                .overlay(
+                                    Text(String(DeveloperConfig.githubUsername.prefix(1))).bold()
+                                        .foregroundStyle(VantaDS.accent)
+                                )
                         }
                     }
                     .frame(width: 44, height: 44)
@@ -90,7 +93,7 @@ struct AboutView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     }.accessibilityLabel("Open GitHub profile of \(DeveloperConfig.githubUsername)")
                 }
-                if !loadingAvatar, user?.login == nil {
+                if !self.loadingAvatar, self.user?.login == nil {
                     Text("Offline — showing cached identity.").font(.caption2).foregroundStyle(VantaDS.secondaryText)
                 }
             }
@@ -142,12 +145,12 @@ struct AboutView: View {
     }
 
     private func load() async {
-        loadingAvatar = true
-        let u = await GitHubAPI.shared.loadUser(username: DeveloperConfig.githubUsername)
-        self.user = u
-        if let data = await GitHubAPI.shared.loadAvatarData(from: u?.avatar_url),
-           let ui = UIImage(data: data) {
-            await MainActor.run { self.avatar = Image(uiImage: ui) }
+        self.loadingAvatar = true
+        let profile = await GitHubAPI.shared.loadUser(username: DeveloperConfig.githubUsername)
+        self.user = profile
+        if let data = await GitHubAPI.shared.loadAvatarData(from: profile?.avatarURL),
+           let image = UIImage(data: data) {
+            await MainActor.run { self.avatar = Image(uiImage: image) }
         }
         await MainActor.run { self.loadingAvatar = false }
     }
