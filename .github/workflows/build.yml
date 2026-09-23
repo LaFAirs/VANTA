@@ -40,6 +40,8 @@ jobs:
         run: swiftlint --strict || true
       - name: Build (simulator, no signing)
         run: |
+          # pipefail: xcpretty exits 0 even when xcodebuild fails — never mask that.
+          set -o pipefail
           xcodebuild -scheme Vanta \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             CODE_SIGNING_ALLOWED=NO \

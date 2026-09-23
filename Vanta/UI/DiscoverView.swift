@@ -120,8 +120,8 @@ struct RepositoriesView: View {
             await Logger.shared.log(.success, "Added repository \(repo.name) (\(repo.apps.count) apps)")
             urlText = ""
             await load()
-        } catch let e as VantaError { error = e }
-        catch { error = .repositoryInvalid(reason: error.localizedDescription) }
+        } catch let e as VantaError { self.error = e }
+        catch { self.error = .repositoryInvalid(reason: error.localizedDescription) }
         busy = false
     }
 }

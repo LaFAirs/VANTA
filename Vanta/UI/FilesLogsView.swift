@@ -39,7 +39,7 @@ struct FilesView: View {
 
     private func load() async {
         do { items = try await VantaFileStore.shared.list(area) }
-        catch { error = .ipaNotFound }
+        catch { self.error = .ipaNotFound }
     }
     private func delete(_ i: VantaFileStore.Item) async {
         try? await VantaFileStore.shared.delete(i.url)

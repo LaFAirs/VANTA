@@ -23,6 +23,8 @@ jobs:
         run: xcodegen generate
       - name: Run tests (simulator)
         run: |
+          # pipefail: xcpretty exits 0 even when xcodebuild fails — never mask that.
+          set -o pipefail
           xcodebuild test -scheme Vanta \
             -destination 'platform=iOS Simulator,name=iPhone 16' \
             CODE_SIGNING_ALLOWED=NO \

@@ -17,7 +17,7 @@ struct SigningView: View {
         ScrollView {
             VStack(spacing: 14) {
                 analysisCard
-                if let error { VantaErrorCard(error) { error = nil } }
+                if let e = error { VantaErrorCard(e) { self.error = nil } }
                 signerCard
                 certCard
                 profileCard
@@ -117,8 +117,8 @@ struct SigningView: View {
             await ManagedAppStore.shared.upsert(ManagedApp(name: package.name, bundleID: package.bundleID,
                                                            version: package.version, build: package.build,
                                                            status: .installed, teamID: cert.teamID))
-        } catch let e as VantaError { error = e; phase = .idle }
-        catch { error = .signingFailed(reason: error.localizedDescription); phase = .idle }
+        } catch let e as VantaError { self.error = e; phase = .idle }
+        catch { self.error = .signingFailed(reason: error.localizedDescription); phase = .idle }
         running = false
     }
 }

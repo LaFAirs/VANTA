@@ -103,8 +103,8 @@ struct ImportSheet: View {
             _ = try await IPAImporter.shared.enqueueURL(url, allowInsecure: false)
             await Logger.shared.log(.success, "Downloaded \(url.lastPathComponent)")
             dismiss()
-        } catch let e as VantaError { error = e }
-        catch { error = .ipaCorrupt(reason: error.localizedDescription) }
+        } catch let e as VantaError { self.error = e }
+        catch { self.error = .ipaCorrupt(reason: error.localizedDescription) }
         busy = false
     }
 }
