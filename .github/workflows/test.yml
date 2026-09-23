@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 5 * * *"
+
+jobs:
+  test-macos:
+    name: Unit + parser + security tests
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Install XcodeGen
+        run: brew install xcodegen || brew upgrade xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Run tests (simulator)
+        run: |
+          xcodebuild test -scheme Vanta \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO \
+            -enableCodeCoverage YES | xcpretty || \
+          xcodebuild test -scheme Vanta \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO -enableCodeCoverage YES
+      - name: Validate repo scripts (Windows-compatible checks)
+        run: python3 Scripts/validate-repo.py

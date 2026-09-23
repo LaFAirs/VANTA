@@ -1,0 +1,2 @@
+*.p12 filter=lfs diff=lfs merge=lfs -text
+*.mobileprovision filter=lfs diff=lfs merge=lfs -text

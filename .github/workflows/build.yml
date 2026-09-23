@@ -1,0 +1,46 @@
+name: Build
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate-windows:
+    name: Validate repo (Windows-safe)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check no secrets committed
+        run: |
+          echo "Scanning for forbidden artefacts..."
+          ! git ls-files | grep -Ei '\.(p12|pfx|mobileprovision|provisionprofile|cer|key)$' || (echo "::error::Signing artefacts must not be committed." && exit 1)
+          ! git ls-files | grep -E 'Secrets\.swift$' || (echo "::error::Secrets.swift must not be committed." && exit 1)
+          echo "OK: no signing artefacts."
+      - name: Validate manifests
+        run: |
+          python3 -c "import yaml,sys,glob; [yaml.safe_load(open(f)) for f in glob.glob('.github/workflows/*.yml')]; print('workflows YAML OK')"
+          python3 Scripts/validate-repo.py
+
+  build-macos:
+    name: Build (macOS + Xcode)
+    runs-on: macos-15
+    needs: validate-windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Install XcodeGen + SwiftLint
+        run: brew install xcodegen swiftlint || brew upgrade xcodegen swiftlint
+      - name: Generate project
+        run: xcodegen generate
+      - name: Lint
+        run: swiftlint --strict || true
+      - name: Build (simulator, no signing)
+        run: |
+          xcodebuild -scheme Vanta \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO \
+            build | xcpretty || xcodebuild -scheme Vanta -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO build

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- VANTA App Icon: black background, geometric electric-blue V -->
+  <rect width="1024" height="1024" rx="230" fill="#05070A"/>
+  <rect x="1" y="1" width="1022" height="1022" rx="229" fill="none" stroke="#2E7CF6" stroke-opacity="0.25" stroke-width="2"/>
+  <!-- Geometric V: two strokes meeting at bottom center -->
+  <path d="M232 288 L512 736 L792 288 L664 288 L512 592 L360 288 Z" fill="#2E7CF6"/>
+  <!-- Subtle glow ellipse under the V -->
+  <ellipse cx="512" cy="780" rx="180" ry="26" fill="#2E7CF6" opacity="0.25"/>
+</svg>

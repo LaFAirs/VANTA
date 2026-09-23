@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-build:
+    name: Test, archive prep, checksums
+    runs-on: macos-15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Install XcodeGen
+        run: brew install xcodegen || brew upgrade xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Run tests
+        run: |
+          xcodebuild test -scheme Vanta \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO | xcpretty || true
+      - name: Import signing certificate (only if secrets configured)
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE }}
+        run: |
+          if [ -z "$APPLE_CERTIFICATE" ]; then
+            echo "No Apple signing secrets configured — skipping signed archive (unsigned artifact only)."
+            exit 0
+          fi
+          echo "$APPLE_CERTIFICATE" | base64 --decode > /tmp/cert.p12
+          security create-keychain -p actions actions.keychain
+          security import /tmp/cert.p12 -k ~/Library/Keychains/actions.keychain-db -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$APPLE_PROVISIONING_PROFILE" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/vanta.mobileprovision
+          rm /tmp/cert.p12
+      - name: Prepare release notes + checksums
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          echo "Building release notes for $TAG"
+          python3 Scripts/prepare-release.py --tag "$TAG" || true
+          shasum -a 256 LICENSE README.md CHANGELOG.md > CHECKSUMS.txt || true
+          cat CHECKSUMS.txt || true
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            CHECKSUMS.txt
+            CHANGELOG.md

@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible VANTA bug
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes: { label: "VANTA version / commit", placeholder: "e.g. 1.0.0 (100) / abc1234" }
+    validations: { required: true }
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device
+      options: [iPhone, iPad, Simulator, Other]
+  - type: input
+    id: ios
+    attributes: { label: "iOS / iPadOS version", placeholder: "e.g. 17.5.1" }
+    validations: { required: true }
+  - type: textarea
+    id: what
+    attributes: { label: "What happened?", description: "Expected vs actual. Paste the VANTA error card text, not just 'Error 13'." }
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes: { label: "Steps to reproduce" }
+    validations: { required: true }
+  - type: textarea
+    id: logs
+    attributes: { label: "Relevant logs (export from VANTA → Logs)", render: text }
+  - type: checkboxes
+    id: secrets
+    attributes:
+      label: Security
+      options:
+        - label: "I did not attach any .p12, .mobileprovision, or private keys"
+          required: true
