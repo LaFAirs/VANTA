@@ -27,6 +27,6 @@ final class VantaCriticalFlowsUITests: XCTestCase {
         app.launch()
         app.tabBars.buttons["Settings"].tap()
         app.buttons["About VANTA"].tap()
-        XCTAssertTrue(app.staticTexts.containing("VANTA").firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["VANTA"].waitForExistence(timeout: 5))
     }
 }
