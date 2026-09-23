@@ -68,3 +68,7 @@ $RECYCLE.BIN/
 *.log
 tmp/
 temp/
+
+# Python
+__pycache__/
+*.py[cod]
