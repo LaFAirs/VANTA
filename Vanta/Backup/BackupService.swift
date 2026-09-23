@@ -44,8 +44,11 @@ public actor BackupService {
 
     /// Decodes a backup payload, throwing on invalid input.
     public func decode(_ data: Data) throws -> Backup {
-        do { return try JSONDecoder().decode(Backup.self, from: data) }
-        catch { throw VantaError.backupFailed(reason: "Backup file is invalid: \(error.localizedDescription)") }
+        do {
+            return try JSONDecoder().decode(Backup.self, from: data)
+        } catch {
+            throw VantaError.backupFailed(reason: "Backup file is invalid: \(error.localizedDescription)")
+        }
     }
 
     /// Encrypt with a user-supplied passphrase (SHA256 → symmetric key, AES-GCM).
@@ -57,6 +60,7 @@ public actor BackupService {
         return combined
     }
 
+    /// Decrypts with a user-supplied passphrase.
     public func decrypt(_ data: Data, passphrase: String) throws -> Data {
         let key = SymmetricKey(data: SHA256.hash(data: Data(passphrase.utf8)))
         let box = try AES.GCM.SealedBox(combined: data)
@@ -78,8 +82,11 @@ public actor BackupService {
         }
     }
 
+    /// Refuses private-key export by design (identities stay in the Keychain).
     public func refusePrivateKeyExport() -> VantaError {
-        .backupFailed(reason: "Private keys are never exported. Identities stay in the Keychain; backups carry metadata only.")
+        .backupFailed(
+            reason: "Private keys are never exported. Identities stay in the Keychain."
+        )
     }
 
     /// Test-only seam: build a backup from explicit inputs without touching stores.

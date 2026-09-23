@@ -10,6 +10,7 @@ public actor InstallationService {
     /// True when direct on-device installation is possible (always false on stock iOS).
     public func canInstallOnDevice() -> Bool { false }
 
+    /// Verifies staged package metadata (platform signature checks run on macOS/CI).
     public func verify(package: SignedPackage) async throws {
         // Metadata-level verification that always runs; platform signature
         // verification runs where codesign tooling exists (macOS/CI).

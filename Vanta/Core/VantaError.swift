@@ -151,10 +151,11 @@ public enum VantaError: Error, LocalizedError, Equatable {
             return vantaFormat("vanta.error.reason.profileExpired",
                                defaultValue: "“%@” expired on %@.", name, vantaDate(date))
         case .profileMismatch(let bundleID, let profile):
-            return vantaFormat(
-                "vanta.error.reason.profileMismatch",
-                defaultValue: "The selected provisioning profile does not match this Bundle Identifier.\nBundle ID: %@\nProvisioning Profile: %@",
-                bundleID, profile)
+            let format = String(
+                localized: "vanta.error.reason.profileMismatch",
+                defaultValue: "The selected provisioning profile does not match this Bundle Identifier."
+            )
+            return format + "\nBundle ID: \(bundleID)\nProvisioning Profile: \(profile)"
         case .entitlementsMismatch(let missing):
             return vantaFormat("vanta.error.reason.entitlementsMismatch",
                                defaultValue: "Missing entitlements: %@. Choose a profile that grants them.",

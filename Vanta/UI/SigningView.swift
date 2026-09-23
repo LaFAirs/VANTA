@@ -128,13 +128,19 @@ struct SigningView: View {
         self.running = true
         self.error = nil
         self.phase = .processing
-        var outcome: SigningPipeline.Outcome = .ongoing
         let stream = SigningPipeline.shared.run(
             package: self.package,
             certificate: cert,
             profile: profile,
             signer: self.signer()
         )
+        let outcome = await self.collectOutcome(stream: stream)
+        await self.applyOutcome(outcome, certificate: cert)
+        self.running = false
+    }
+
+    private func collectOutcome(stream: AsyncStream<SigningPipeline.Report>) async -> SigningPipeline.Outcome {
+        var outcome: SigningPipeline.Outcome = .ongoing
         for await report in stream {
             self.progress = report.progress
             self.status = report.message
@@ -147,25 +153,13 @@ struct SigningView: View {
             if report.progress >= 1.0 { self.phase = .success }
             outcome = report.outcome
         }
+        return outcome
+    }
+
+    private func applyOutcome(_ outcome: SigningPipeline.Outcome, certificate: SigningCertificate) async {
         switch outcome {
         case .succeeded(let staged):
-            do {
-                try await ManagedAppStore.shared.upsert(ManagedApp(
-                    name: self.package.name,
-                    bundleID: self.package.bundleID,
-                    version: self.package.version,
-                    build: self.package.build,
-                    status: .installed,
-                    teamID: cert.teamID
-                ))
-                await Logger.shared.log(.success, "Installed record for \(staged.original.bundleID)")
-            } catch let updateError as VantaError {
-                self.error = updateError
-                self.phase = .idle
-            } catch {
-                self.error = .signingFailed(reason: error.localizedDescription)
-                self.phase = .idle
-            }
+            await self.recordInstallation(staged: staged, certificate: certificate)
         case .failed(let pipelineError):
             self.error = pipelineError
             self.phase = .idle
@@ -173,7 +167,26 @@ struct SigningView: View {
             self.error = .signingFailed(reason: "Signing pipeline ended without a result.")
             self.phase = .idle
         }
-        self.running = false
+    }
+
+    private func recordInstallation(staged: SignedPackage, certificate: SigningCertificate) async {
+        do {
+            try await ManagedAppStore.shared.upsert(ManagedApp(
+                name: self.package.name,
+                bundleID: self.package.bundleID,
+                version: self.package.version,
+                build: self.package.build,
+                status: .installed,
+                teamID: certificate.teamID
+            ))
+            await Logger.shared.log(.success, "Installed record for \(staged.original.bundleID)")
+        } catch let updateError as VantaError {
+            self.error = updateError
+            self.phase = .idle
+        } catch {
+            self.error = .signingFailed(reason: error.localizedDescription)
+            self.phase = .idle
+        }
     }
 }
 

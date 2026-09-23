@@ -2,7 +2,7 @@ import Foundation
 
 /// GitHub public profile loader with disk caching. Falls back to placeholder offline.
 public actor GitHubAPI {
-    /// Public GitHub user record.
+    /// Public GitHub user record (snake_case mapped automatically).
     public struct User: Codable, Sendable {
         /// Login name.
         public var login: String
@@ -12,13 +12,6 @@ public actor GitHubAPI {
         public var htmlURL: URL?
         /// Display name, if provided.
         public var name: String?
-
-        private enum CodingKeys: String, CodingKey {
-            case login
-            case avatarURL = "avatar_url"
-            case htmlURL = "html_url"
-            case name
-        }
     }
 
     /// Shared instance.
@@ -37,7 +30,9 @@ public actor GitHubAPI {
             let (data, response) = try await session.data(for: request)
             if (response as? HTTPURLResponse)?.statusCode == 200 {
                 self.lastFetch = Date()
-                return try? JSONDecoder().decode(User.self, from: data)
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                return try? decoder.decode(User.self, from: data)
             }
         } catch { /* offline → nil, caller shows fallback */ }
         return nil

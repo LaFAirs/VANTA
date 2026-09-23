@@ -19,11 +19,13 @@ public struct LogEntry: Identifiable, Codable, Sendable {
 /// Central logger: actor-backed, main-thread published mirror for SwiftUI.
 /// Every entry is also routed to unified logging (OSLog, subsystem com.vanta.app).
 public actor Logger {
+    /// Shared instance.
     public static let shared = Logger()
     private var entries: [LogEntry] = []
     private var listeners: [@Sendable ([LogEntry]) -> Void] = []
     private let oslog = OSLog.Logger(subsystem: "com.vanta.app", category: "vanta")
 
+    /// Records an entry and mirrors it to OSLog.
     public func log(_ level: LogLevel, _ message: String) {
         entries.append(LogEntry(level: level, message: message))
         if entries.count > 2000 { entries.removeFirst(entries.count - 2000) }
@@ -38,13 +40,18 @@ public actor Logger {
         for listener in listeners { listener(snapshot) }
     }
 
+    /// Current entries snapshot.
     public func snapshot() -> [LogEntry] { entries }
+
+    /// Clears all entries.
     public func clear() { entries.removeAll() }
 
-    public func onUpdate(_ fn: @escaping @Sendable ([LogEntry]) -> Void) {
-        listeners.append(fn)
+    /// Subscribes to entry updates.
+    public func onUpdate(_ handler: @escaping @Sendable ([LogEntry]) -> Void) {
+        listeners.append(handler)
     }
 
+    /// Exports entries as text.
     public func export() -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm:ss"

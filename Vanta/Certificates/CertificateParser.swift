@@ -5,6 +5,7 @@ import Security
 public enum Keychain {
     static let service = "com.vanta.app.identities"
 
+    /// Stores identity data under a reference (device-only accessibility).
     @discardableResult
     public static func store(reference: String, data: Data) -> Bool {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,

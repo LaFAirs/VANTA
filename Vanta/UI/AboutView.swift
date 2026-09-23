@@ -51,9 +51,11 @@ struct AboutView: View {
                 Text("Developer").font(.headline)
                 HStack(spacing: 12) {
                     Group {
-                        if let avatar { avatar.resizable() }
-                        else if self.loadingAvatar { ProgressView().tint(VantaDS.accent) }
-                        else {
+                        if let avatar {
+                            avatar.resizable()
+                        } else if self.loadingAvatar {
+                            ProgressView().tint(VantaDS.accent)
+                        } else {
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .fill(VantaDS.secondary)
                                 .overlay(
