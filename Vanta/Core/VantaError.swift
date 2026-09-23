@@ -218,12 +218,14 @@ public enum VantaError: Error, LocalizedError, Equatable {
 }
 
 /// Localized format helper with an English default.
+/// Resolves through the main bundle (String Catalog when present).
 private func vantaFormat(
-    _ key: String.LocalizationValue,
-    defaultValue: String.LocalizationValue,
+    _ key: String,
+    defaultValue: String,
     _ args: CVarArg...
 ) -> String {
-    String(format: String(localized: key, defaultValue: defaultValue), locale: Locale.current, arguments: args)
+    let format = Bundle.main.localizedString(forKey: key, value: defaultValue, table: nil)
+    return String(format: format, locale: Locale.current, arguments: args)
 }
 
 /// Locale-aware short date for error messages.

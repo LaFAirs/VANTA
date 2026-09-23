@@ -90,7 +90,8 @@ public actor SigningPipeline {
 
     /// Runs the pipeline, streaming reports. The final report carries the
     /// outcome. Cancelling the consuming task stops the run.
-    public func run(
+    /// Nonisolated: it only builds the stream, all work happens in tasks.
+    public nonisolated func run(
         package: IPAPackage,
         certificate: SigningCertificate,
         profile: ProvisioningProfile,
