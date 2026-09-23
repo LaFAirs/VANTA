@@ -7,6 +7,12 @@ public actor InstallationService {
     /// Shared instance.
     public static let shared = InstallationService()
 
+    /// Explanation shown when installation is unavailable.
+    private static let unavailableReason =
+        "Direct on-device installation is not available in this environment. " +
+        "Export the signed IPA and install it with your platform signer " +
+        "(Xcode / Apple Configurator / CI)."
+
     /// True when direct on-device installation is possible (always false on stock iOS).
     public func canInstallOnDevice() -> Bool { false }
 
@@ -23,9 +29,7 @@ public actor InstallationService {
     /// Attempts installation, throwing the real reason when unavailable.
     public func install(package: SignedPackage) async throws {
         if !canInstallOnDevice() {
-            throw VantaError.installationUnavailable(
-                reason: "Direct on-device installation is not available in this environment. Export the signed IPA and install it with your platform signer (Xcode / Apple Configurator / CI)."
-            )
+            throw VantaError.installationUnavailable(reason: Self.unavailableReason)
         }
     }
 
