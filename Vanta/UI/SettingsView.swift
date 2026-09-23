@@ -26,7 +26,7 @@ struct SettingsView: View {
                     Stepper(
                         "Update interval: \(self.settings.repoUpdateIntervalH)h",
                         value: self.$settings.repoUpdateIntervalH,
-                        in: 1...168
+                        in: 1 ... 168
                     )
                     Toggle("Allow HTTP (insecure, warns)", isOn: self.$settings.allowInsecureRepos)
                 }

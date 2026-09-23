@@ -27,7 +27,7 @@ public actor InstallationService {
     }
 
     /// Attempts installation, throwing the real reason when unavailable.
-    public func install(package: SignedPackage) async throws {
+    public func install(_ package: SignedPackage) async throws {
         if !canInstallOnDevice() {
             throw VantaError.installationUnavailable(reason: Self.unavailableReason)
         }

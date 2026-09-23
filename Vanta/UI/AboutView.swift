@@ -45,28 +45,31 @@ struct AboutView: View {
         }
     }
 
+    @ViewBuilder
+    private var avatarImage: some View {
+        if let avatar {
+            avatar.resizable()
+        } else if self.loadingAvatar {
+            ProgressView().tint(VantaDS.accent)
+        } else {
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(VantaDS.secondary)
+                .overlay(
+                    Text(String(DeveloperConfig.githubUsername.prefix(1))).bold()
+                        .foregroundStyle(VantaDS.accent)
+                )
+        }
+    }
+
     private var developerCard: some View {
         VantaCard {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Developer").font(.headline)
                 HStack(spacing: 12) {
-                    Group {
-                        if let avatar {
-                            avatar.resizable()
-                        } else if self.loadingAvatar {
-                            ProgressView().tint(VantaDS.accent)
-                        } else {
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .fill(VantaDS.secondary)
-                                .overlay(
-                                    Text(String(DeveloperConfig.githubUsername.prefix(1))).bold()
-                                        .foregroundStyle(VantaDS.accent)
-                                )
-                        }
-                    }
-                    .frame(width: 44, height: 44)
-                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                    .accessibilityLabel("Developer avatar")
+                    self.avatarImage
+                        .frame(width: 44, height: 44)
+                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        .accessibilityLabel("Developer avatar")
                     VStack(alignment: .leading) {
                         Text("@\(DeveloperConfig.githubUsername)").font(.subheadline).bold()
                         if let url = DeveloperConfig.githubProfileURL {

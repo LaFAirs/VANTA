@@ -77,14 +77,13 @@ public struct AppCard: View {
         }
     }
 
+    @ViewBuilder
     private func action(_ label: String, system: String, handler: (() -> Void)?) -> some View {
-        Group {
-            if let handler {
-                Button(action: handler) {
-                    Label(label, systemImage: system).foregroundStyle(VantaDS.accent)
-                }
-                .accessibilityLabel("\(label) \(self.app.name)")
+        if let handler {
+            Button(action: handler) {
+                Label(label, systemImage: system).foregroundStyle(VantaDS.accent)
             }
+            .accessibilityLabel("\(label) \(self.app.name)")
         }
     }
 }

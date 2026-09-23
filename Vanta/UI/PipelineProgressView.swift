@@ -63,8 +63,10 @@ public struct PipelineProgressView: View {
 
     private func color(for step: Phase) -> Color {
         let order = Phase.allCases
-        guard let current = order.firstIndex(of: step),
-              let active = order.firstIndex(of: self.phase) else {
+        guard let current = order.firstIndex(of: step) else {
+            return VantaDS.cardBorder
+        }
+        guard let active = order.firstIndex(of: self.phase) else {
             return VantaDS.cardBorder
         }
         if step == .success && self.phase == .success { return VantaDS.success }

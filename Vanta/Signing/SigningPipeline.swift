@@ -172,8 +172,11 @@ public actor SigningPipeline {
                                  bundleID: package.bundleID,
                                  requestedEntitlements: package.entitlements)
         try await self.emit(.sign, 0.70, "Signing with \(signer.displayName)…", yield: yield)
-        let signed = try await signer.sign(application: package, certificate: certificate,
-                                            profile: profile) { fraction in
+        let signed = try await signer.sign(
+            application: package,
+            certificate: certificate,
+            profile: profile
+        ) { fraction in
             yield(Report(step: .sign, progress: 0.70 + 0.10 * fraction,
                          message: "Signing with \(signer.displayName)…"))
         }

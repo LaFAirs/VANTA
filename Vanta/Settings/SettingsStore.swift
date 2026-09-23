@@ -42,7 +42,7 @@ final class SettingsStore: ObservableObject {
     @AppStorage("confirmBeforeInstall") var confirmBeforeInstall = true
     @AppStorage("installNotifications") var installNotifications = true
 
-    // Advanced
+    /// Advanced diagnostics.
     @AppStorage("debugLogs") var debugLogs = false
 
     var appearance: Appearance {

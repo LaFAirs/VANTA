@@ -84,17 +84,30 @@ public enum CertificateParser {
 public enum ProvisioningProfileParser {
     /// Parses a profile plist dictionary. Throws on missing or expired data.
     public static func parse(plist: [String: Any]) throws -> ProvisioningProfile {
-        guard let name = plist["Name"] as? String,
-              let appID = (plist["Entitlements"] as? [String: Any])?["application-identifier"] as? String,
-              let teamID = (plist["TeamIdentifier"] as? [String])?.first ?? (plist["TeamIdentifier"] as? String),
-              let expiry = plist["ExpirationDate"] as? Date else {
-            throw VantaError.repositoryInvalid(reason: "Provisioning profile plist is missing required fields.")
+        let missing = "Provisioning profile plist is missing required fields."
+        guard let name = plist["Name"] as? String else {
+            throw VantaError.repositoryInvalid(reason: missing)
+        }
+        guard let entitlements = plist["Entitlements"] as? [String: Any] else {
+            throw VantaError.repositoryInvalid(reason: missing)
+        }
+        guard let appID = entitlements["application-identifier"] as? String else {
+            throw VantaError.repositoryInvalid(reason: missing)
+        }
+        let teamField = plist["TeamIdentifier"]
+        let teamID = (teamField as? [String])?.first ?? (teamField as? String)
+        guard let teamID else {
+            throw VantaError.repositoryInvalid(reason: missing)
+        }
+        guard let expiry = plist["ExpirationDate"] as? Date else {
+            throw VantaError.repositoryInvalid(reason: missing)
         }
         if Validators.isExpired(expiry) {
             throw VantaError.profileExpired(name: name, date: expiry)
         }
-        let ents = (plist["Entitlements"] as? [String: Any])?.keys.sorted() ?? []
-        return ProvisioningProfile(name: name, appID: appID, teamID: teamID,
-                                   expiresAt: expiry, entitlements: ents)
+        return ProvisioningProfile(
+            name: name, appID: appID, teamID: teamID,
+            expiresAt: expiry, entitlements: entitlements.keys.sorted()
+        )
     }
 }

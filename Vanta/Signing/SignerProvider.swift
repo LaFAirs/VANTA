@@ -194,10 +194,10 @@ public struct PersonalTeamSigner: SignerProvider {
 
     /// Always throws: no fake signing.
     public func sign(
-        application: IPAPackage,
-        certificate: SigningCertificate,
-        profile: ProvisioningProfile,
-        progress: @Sendable (Double) -> Void
+        application _: IPAPackage,
+        certificate _: SigningCertificate,
+        profile _: ProvisioningProfile,
+        progress _: @Sendable (Double) -> Void
     ) async throws -> SignedPackage {
         throw VantaError.signerUnavailable("Personal Team is not configured on this device.")
     }
@@ -222,10 +222,10 @@ public struct RemoteSigner: SignerProvider {
 
     /// Always throws: no fake signing.
     public func sign(
-        application: IPAPackage,
-        certificate: SigningCertificate,
-        profile: ProvisioningProfile,
-        progress: @Sendable (Double) -> Void
+        application _: IPAPackage,
+        certificate _: SigningCertificate,
+        profile _: ProvisioningProfile,
+        progress _: @Sendable (Double) -> Void
     ) async throws -> SignedPackage {
         throw VantaError.signerUnavailable("Remote signer is not configured.")
     }

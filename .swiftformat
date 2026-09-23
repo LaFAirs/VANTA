@@ -1,6 +1,19 @@
-# Keep formatting deterministic; CI enforces `swiftformat --lint .`.
+# Precedence: SwiftLint owns `self` style (explicit_self) and API docs;
+# SwiftFormat owns layout. Disabled rules conflict with that split or with
+# the deliberate compact single-line style used across VANTA.
 --indent 4
 --linebreaks lf
 --semicolons inline
 --trailingcommas never
 --emptybraces no-space
+--exclude VantaTests
+--exclude VantaUITests
+--disable redundantSelf
+--disable wrapFunctionBodies
+--disable wrapPropertyBodies
+--disable wrapIfStatementBodies
+--disable wrapLoopBodies
+--disable wrapMultilineStatementBraces
+--disable wrapArguments
+--disable blankLinesBetweenScopes
+--disable hoistPatternLet

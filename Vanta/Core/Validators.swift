@@ -18,10 +18,13 @@ public enum Validators {
     /// Parses an http(s) URL or throws.
     public static func parseURL(_ raw: String) throws -> URL {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let candidate = URL(string: trimmed),
-              let scheme = candidate.scheme?.lowercased(),
-              ["https", "http"].contains(scheme),
-              candidate.host != nil else {
+        guard let candidate = URL(string: trimmed) else {
+            throw VantaError.invalidURL(raw)
+        }
+        guard let scheme = candidate.scheme?.lowercased() else {
+            throw VantaError.invalidURL(raw)
+        }
+        guard ["https", "http"].contains(scheme), candidate.host != nil else {
             throw VantaError.invalidURL(raw)
         }
         return candidate

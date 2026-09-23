@@ -111,7 +111,8 @@ struct LogsView: View {
         return "\(timestamp) · \(level)"
     }
 
-    private func color(_ level: LogLevel) -> Color {        switch level {
+    private func color(_ level: LogLevel) -> Color {
+        switch level {
         case .info: return VantaDS.accent
         case .success: return VantaDS.success
         case .warning: return VantaDS.warning

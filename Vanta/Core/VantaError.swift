@@ -85,20 +85,26 @@ public enum VantaError: Error, LocalizedError, Equatable {
         case .infoPlistMissing:
             return String(localized: "vanta.error.title.infoPlistMissing", defaultValue: "Info.plist missing")
         case .unsupportedArchitecture:
-            return String(localized: "vanta.error.title.unsupportedArchitecture",
-                           defaultValue: "Unsupported architecture")
+            return String(
+                localized: "vanta.error.title.unsupportedArchitecture",
+                defaultValue: "Unsupported architecture"
+            )
         case .certificateExpired:
             return String(localized: "vanta.error.title.certificateExpired", defaultValue: "Certificate expired")
         case .certificateInvalid:
             return String(localized: "vanta.error.title.certificateInvalid", defaultValue: "Certificate invalid")
         case .profileExpired:
-            return String(localized: "vanta.error.title.profileExpired",
-                           defaultValue: "Provisioning profile expired")
+            return String(
+                localized: "vanta.error.title.profileExpired",
+                defaultValue: "Provisioning profile expired"
+            )
         case .profileMismatch:
             return String(localized: "vanta.error.title.profileMismatch", defaultValue: "Signing failed")
         case .entitlementsMismatch:
-            return String(localized: "vanta.error.title.entitlementsMismatch",
-                           defaultValue: "Entitlements mismatch")
+            return String(
+                localized: "vanta.error.title.entitlementsMismatch",
+                defaultValue: "Entitlements mismatch"
+            )
         case .signerUnavailable:
             return String(localized: "vanta.error.title.signerUnavailable", defaultValue: "Signer unavailable")
         case .signingFailed:
@@ -106,8 +112,10 @@ public enum VantaError: Error, LocalizedError, Equatable {
         case .verificationFailed:
             return String(localized: "vanta.error.title.verificationFailed", defaultValue: "Verification failed")
         case .installationUnavailable:
-            return String(localized: "vanta.error.title.installationUnavailable",
-                           defaultValue: "Installation unavailable")
+            return String(
+                localized: "vanta.error.title.installationUnavailable",
+                defaultValue: "Installation unavailable"
+            )
         case .refreshUnavailable:
             return String(localized: "vanta.error.title.refreshUnavailable", defaultValue: "Refresh unavailable")
         case .repositoryInvalid:

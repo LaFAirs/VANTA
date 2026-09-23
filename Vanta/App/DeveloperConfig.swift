@@ -12,8 +12,7 @@ public enum DeveloperConfig {
     /// Build number (CI overrides per run).
     public static let buildNumber = "100"
 
-    // GitHub identity for About page, links, and avatar loading.
-    /// GitHub username.
+    /// GitHub username for About page, links, and avatar loading.
     public static let githubUsername = "LaFAirs"
 
     /// GitHub profile URL.
