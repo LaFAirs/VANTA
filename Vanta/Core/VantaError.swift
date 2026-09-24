@@ -3,7 +3,7 @@ import Foundation
 /// Typed, user-facing errors. Every case maps to a title, reason, remedy,
 /// and a stable log code (`VANTA_Exxx`) for correlating logs with failures.
 /// Never surface bare codes like "Error 13".
-public enum VantaError: Error, LocalizedError, Equatable {
+public enum VantaError: Error, LocalizedError, Equatable, Sendable {
     /// Malformed URL string.
     case invalidURL(String)
     /// Plain-HTTP URL without explicit acknowledgement.

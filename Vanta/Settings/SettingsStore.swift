@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Color scheme preference.
-public enum Appearance: String, CaseIterable {
+public enum Appearance: String, CaseIterable, Sendable {
     /// Follows the system.
     case system
     /// Always dark (VANTA default look).

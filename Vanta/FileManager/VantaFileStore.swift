@@ -3,7 +3,7 @@ import Foundation
 /// Scoped on-device storage: IPAs / Certificates / Profiles / Downloads / Backups / Logs.
 public actor VantaFileStore {
     /// Storage area.
-    public enum Area: String, CaseIterable {
+    public enum Area: String, CaseIterable, Sendable {
         /// Imported IPA files.
         case ipas = "IPAs"
         /// Imported identities.
