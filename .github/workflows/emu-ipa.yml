@@ -65,10 +65,13 @@ jobs:
           xcodegen generate --spec project-emu.yml
           test -d SwitchEmu.xcodeproj || { echo "::error::xcodegen did not produce SwitchEmu.xcodeproj"; exit 1; }
 
+      - name: Ensure iOS Simulator exists
+        run: bash ../Scripts/ensure-simulator.sh
+
       - name: Run unit tests (gating)
         run: |
           set -euo pipefail
-          bash ../Scripts/ensure-simulator.sh
+          # shellcheck disable=SC2086
           xcodebuild test -scheme SwitchEmu \
             -destination "$SIM_DESTINATION" \
             CODE_SIGNING_ALLOWED=NO 2>&1 | tee build-test.log
