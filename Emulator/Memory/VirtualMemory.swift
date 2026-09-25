@@ -80,14 +80,15 @@ final class VirtualMemory: @unchecked Sendable {
         try self.writeBytes([value], at: address)
     }
 
+    /// Little-endian 32-bit load. Intentionally alignment-tolerant
+    /// (byte-wise assembly): the demo ISA stores immediates at odd offsets.
     func read32(at address: UInt64) throws -> UInt32 {
-        guard address % 4 == 0 else { throw MemoryError.misaligned(address: address) }
         let bytes = try self.readBytes(at: address, count: 4)
         return UInt32(bytes[0]) | (UInt32(bytes[1]) << 8) | (UInt32(bytes[2]) << 16) | (UInt32(bytes[3]) << 24)
     }
 
+    /// Little-endian 32-bit store. Alignment-tolerant, see `read32`.
     func write32(_ value: UInt32, at address: UInt64) throws {
-        guard address % 4 == 0 else { throw MemoryError.misaligned(address: address) }
         let bytes: [UInt8] = [
             UInt8(value & 0xFF),
             UInt8((value >> 8) & 0xFF),

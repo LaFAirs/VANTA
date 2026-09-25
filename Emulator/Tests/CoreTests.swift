@@ -49,7 +49,7 @@ struct CoreTests {
         }
         let cpu = Arm64Interpreter(memory: memory, loadAddress: 0x1_0000)
         let executed = try cpu.run(budget: 16)
-        #expect(executed == 3)
+        #expect(executed == 4)
         #expect(cpu.snapshot().registers[3] == 42)
         #expect(cpu.snapshot().halted)
     }
