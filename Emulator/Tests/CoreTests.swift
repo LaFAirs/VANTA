@@ -1,5 +1,7 @@
 import Testing
 
+@testable import SwitchEmu
+
 /// Unit tests for the honest core: memory guards, demo ISA, scheduler,
 /// interrupts, ring buffer and frame pacing. No hardware required.
 struct CoreTests {
