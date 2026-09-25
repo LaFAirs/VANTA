@@ -23,6 +23,8 @@ Package.resolved
 # XcodeGen generated project (generated in CI on macOS)
 Vanta.xcodeproj/
 !Vanta.xcodeproj/.keep
+Emulator/SwitchEmu.xcodeproj/
+Emulator/build/
 
 # Certificates, profiles, keys — NEVER commit
 *.p12

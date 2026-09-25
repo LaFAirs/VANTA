@@ -14,5 +14,6 @@ file_length: 500
 excluded:
   - VantaTests
   - VantaUITests
+  - Emulator/Tests
   - DerivedData
   - Pods

@@ -8,6 +8,7 @@
 --emptybraces no-space
 --exclude VantaTests
 --exclude VantaUITests
+--exclude Emulator/Tests
 --disable redundantSelf
 --disable wrapFunctionBodies
 --disable wrapPropertyBodies
