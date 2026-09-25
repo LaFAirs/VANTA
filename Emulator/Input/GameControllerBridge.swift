@@ -111,8 +111,8 @@ final class GameControllerBridge: @unchecked Sendable {
 
     var supportsRumble: Bool { false }
 
-    private func apply(_ element: GCControllerButtonInput, to button: GameButton, input: inout GameInput) {
-        input.set(button, pressed: element.isPressed)
+    private func apply(_ element: GCControllerButtonInput?, to button: GameButton, input: inout GameInput) {
+        input.set(button, pressed: element?.isPressed == true)
     }
 
     private func handleConnect(_ controller: GCController) {

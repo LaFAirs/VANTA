@@ -58,7 +58,7 @@ final class AudioEngine: @unchecked Sendable {
         let queue = self.frames
         let node = AVAudioSourceNode(format: format) { _, _, frameCount, audioBufferList in
             let list = UnsafeMutableAudioBufferListPointer(audioBufferList)
-            guard let buffer = list.first else { return noErr }
+            guard var buffer = list.first else { return noErr }
             let capacity = Int(frameCount)
             let raw = buffer.mData?.assumingMemoryBound(to: Int16.self)
             var written = 0
@@ -78,6 +78,7 @@ final class AudioEngine: @unchecked Sendable {
                 }
             }
             buffer.mDataByteSize = UInt32(capacity * MemoryLayout<Int16>.size)
+            list[0] = buffer
             return noErr
         }
         engine.attach(node)
