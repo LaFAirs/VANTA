@@ -4,7 +4,7 @@ import Metal
 /// Bounded Metal texture cache keyed by descriptor string. Evicts least
 /// recently inserted entries beyond capacity. Single-owner: create and use
 /// on the render thread.
-final class TextureCache: Sendable {
+final class TextureCache: @unchecked Sendable {
     private let lock = NSLock()
     private let device: MTLDevice
     private let capacity: Int

@@ -4,7 +4,7 @@ import Foundation
 /// Low-latency output abstraction over AVAudioEngine. The emulation loop
 /// pushes 16-bit mono PCM blocks into `submit`; the engine pulls from the
 /// ring via a source node. Silence is rendered on underrun (no glitches).
-final class AudioEngine: Sendable {
+final class AudioEngine: @unchecked Sendable {
     static let sampleRate: Double = 48_000.0
 
     private let lock = NSLock()

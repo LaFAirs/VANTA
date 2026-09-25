@@ -12,7 +12,7 @@ enum EmulatorStatus: String, Sendable {
 /// Game loading is deliberately limited to raw demo binaries mapped at a
 /// fixed address; commercial Switch formats are NOT parsed and encrypted
 /// content is NOT decrypted (see Filesystem/SandboxFS.swift).
-final class EmulatorCore: Sendable {
+final class EmulatorCore: @unchecked Sendable {
     static let loadAddress: UInt64 = 0x1_0000
     static let memorySize: UInt64 = 0x10_0000
 

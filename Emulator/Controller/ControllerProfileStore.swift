@@ -2,7 +2,7 @@ import Foundation
 
 /// Persists controller profiles and the active selection as JSON in
 /// UserDefaults. Ships with a single "Default" profile.
-final class ControllerProfileStore: Sendable {
+final class ControllerProfileStore: @unchecked Sendable {
     private let lock = NSLock()
     private let profilesKey = "switchemu.controller.profiles"
     private let activeKey = "switchemu.controller.active"

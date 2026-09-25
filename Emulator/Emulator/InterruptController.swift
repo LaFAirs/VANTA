@@ -2,7 +2,7 @@ import Foundation
 
 /// Priority-sorted pending-interrupt queue. Sources raise interrupts by ID;
 /// the CPU drains the highest-priority pending one per timeslice.
-final class InterruptController: Sendable {
+final class InterruptController: @unchecked Sendable {
     private let lock = NSLock()
     private var pending: [Int: Int] = [:]
 

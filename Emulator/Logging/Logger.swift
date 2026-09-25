@@ -27,7 +27,7 @@ struct LogEntry: Sendable, Identifiable, Codable {
 
 /// Thread-safe in-memory log store. Entries can be listed, filtered and
 /// exported to a text file. No networking, no telemetry.
-final class Logger: Sendable {
+final class Logger: @unchecked Sendable {
     static let shared = Logger()
 
     private let lock = NSLock()

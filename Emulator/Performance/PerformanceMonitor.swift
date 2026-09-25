@@ -18,7 +18,7 @@ struct PerformanceSnapshot: Sendable {
 
 /// Rolling performance monitor fed by the render loop. Call `recordFrame`
 /// once per presented frame; read `snapshot()` for UI display.
-final class PerformanceMonitor: Sendable {
+final class PerformanceMonitor: @unchecked Sendable {
     private let lock = NSLock()
     private var lastTime: Date?
     private var emaFrameTime: Double = 1.0 / 60.0

@@ -10,7 +10,7 @@ enum SchedulerState: String, Sendable {
 /// Cooperative tick scheduler. The CPU interpreter calls `tick()` once per
 /// executed instruction batch; GPU/audio hosts poll `state` and
 /// `totalTicks` to pace their work. No threads are spawned here.
-final class Scheduler: Sendable {
+final class Scheduler: @unchecked Sendable {
     private let lock = NSLock()
     private var currentState: SchedulerState = .stopped
     private var ticks: UInt64 = 0

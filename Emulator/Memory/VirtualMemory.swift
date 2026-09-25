@@ -38,7 +38,7 @@ struct MemoryRegion: Sendable {
 
 /// Software-modelled virtual address space with regions, permissions and
 /// bounds checking. This is a plain bounds-checked model, not OS-level VM.
-final class VirtualMemory: Sendable {
+final class VirtualMemory: @unchecked Sendable {
     private let lock = NSLock()
     private var regions: [MemoryRegion] = []
 

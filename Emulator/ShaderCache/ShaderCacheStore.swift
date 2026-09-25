@@ -3,7 +3,7 @@ import Foundation
 /// Versioned on-disk cache for compiled pipeline descriptors, keyed by a
 /// content hash. Stores data blobs only; Metal objects are rebuilt at
 /// launch and re-cached. Cache misses compile synchronously on first use.
-final class ShaderCacheStore: Sendable {
+final class ShaderCacheStore: @unchecked Sendable {
     private let lock = NSLock()
     private let manager = FileManager.default
     private let version = "v1"

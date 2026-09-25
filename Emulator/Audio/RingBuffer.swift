@@ -3,7 +3,7 @@ import Foundation
 /// Bounded FIFO for PCM frames between the emulation loop (producer) and
 /// the audio output callback (consumer). Lock-protected; drop-oldest on
 /// overflow so audio never blocks emulation.
-final class RingBuffer<Element>: Sendable where Element: Sendable {
+final class RingBuffer<Element>: @unchecked Sendable where Element: Sendable {
     private let lock = NSLock()
     private var storage: [Element?]
     private var head = 0

@@ -56,7 +56,7 @@ struct TouchLayout: Sendable, Codable, Equatable, Identifiable {
 }
 
 /// Stores touch layouts and the active selection. Emits no UI itself.
-final class TouchController: Sendable {
+final class TouchController: @unchecked Sendable {
     private let lock = NSLock()
     private let layoutsKey = "switchemu.touch.layouts"
     private let activeKey = "switchemu.touch.active"

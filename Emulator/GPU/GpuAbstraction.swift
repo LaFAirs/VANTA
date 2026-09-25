@@ -21,7 +21,7 @@ protocol GpuDevice: Sendable {
 }
 
 /// No-op implementation for logic tests without a GPU.
-final class NullGpu: GpuDevice, Sendable {
+final class NullGpu: GpuDevice, @unchecked Sendable {
     private let lock = NSLock()
     private var currentResolution: RenderResolution = .native
     private var presented: UInt64 = 0

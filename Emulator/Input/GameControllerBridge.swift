@@ -33,7 +33,7 @@ struct ControllerProfile: Sendable, Codable, Equatable, Identifiable {
 /// extended gamepad each frame into a `GameInput`. Rumble is intentionally
 /// not wired: haptic engines differ per controller and no fake vibration is
 /// reported. Multiple profiles are stored in UserDefaults as JSON.
-final class GameControllerBridge: Sendable {
+final class GameControllerBridge: @unchecked Sendable {
     private let lock = NSLock()
     private var latest = GameInput()
     private var connectedNames: [String] = []

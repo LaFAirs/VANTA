@@ -23,7 +23,7 @@ struct ImportedFile: Sendable, Equatable {
     let importedAt: Date
 }
 
-final class SandboxFS: Sendable {
+final class SandboxFS: @unchecked Sendable {
     static let maxImportBytes = 8 * 1024 * 1024
     static let allowedExtensions: Set<String> = ["bin"]
 

@@ -38,7 +38,7 @@ enum InterpreterError: Error, Sendable, Equatable {
 
 /// Single-threaded fetch-decode-execute interpreter for the demo ISA.
 /// Drive it with `step()` / `run(budget:)` from the emulation loop.
-final class Arm64Interpreter: Sendable {
+final class Arm64Interpreter: @unchecked Sendable {
     private let lock = NSLock()
     private var cpuState: CPUState
     private let memory: VirtualMemory

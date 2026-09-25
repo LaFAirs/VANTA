@@ -14,7 +14,7 @@ struct SaveProfile: Sendable, Codable, Equatable, Identifiable {
 /// Local save-data manager: per-profile directories under Application
 /// Support, with backup/restore and user-driven export. Saves never leave
 /// the device except through an explicit user share/export action.
-final class SaveManager: Sendable {
+final class SaveManager: @unchecked Sendable {
     private let lock = NSLock()
     private let manager = FileManager.default
     private let profilesKey = "switchemu.save.profiles"

@@ -5,7 +5,7 @@ import MetalKit
 /// Triple-buffered Metal renderer with pipeline caching and VSync.
 /// Renders a neutral test pattern (NOT game graphics: no Switch GPU
 /// emulation exists yet). Frame pacing comes from the MTKView display link.
-final class MetalRenderer: NSObject, Sendable, MTKViewDelegate {
+final class MetalRenderer: NSObject, MTKViewDelegate, @unchecked Sendable {
     private let device: MTLDevice
     private let queue: MTLCommandQueue
     private let pipeline: MTLRenderPipelineState
